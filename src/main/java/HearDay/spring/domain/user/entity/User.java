@@ -6,10 +6,9 @@ import HearDay.spring.domain.discussion.entity.Discussion;
 import HearDay.spring.domain.userarticlebookmark.entity.UserArticleBookmark;
 import HearDay.spring.domain.wordbookmark.entity.UserWordBookmark;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 
 @Entity
 @Getter
@@ -38,9 +37,9 @@ public class User extends BaseEntity {
 
     @ElementCollection(targetClass = CategoryEnum.class)
     @CollectionTable(
-            name = "user_category",  // 별도 테이블 생성
+            name = "user_category", // 별도 테이블 생성
             joinColumns = @JoinColumn(name = "user_id") // User 엔티티와 매핑
-    )
+            )
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private List<CategoryEnum> userCategory;

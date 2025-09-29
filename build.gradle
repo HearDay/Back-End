@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.diffplug.spotless' version '6.25.0'
 }
 
 group = 'HearDay'
@@ -22,6 +23,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	gradlePluginPortal()
 }
 
 dependencies {
@@ -47,4 +49,22 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+spotless {
+	java {
+		// 구글 자바 코드 스타일
+		googleJavaFormat("1.17.0")
+				.aosp()
+				.reflowLongStrings(false)
+		formatAnnotations()
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+}
+
+tasks.named('build') {
+	dependsOn 'spotlessApply'
 }

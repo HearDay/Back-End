@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /*
-* 공통 API 응답 포맷
-* success: 요청 성공 여부
-* message: 추가적인 메시지 (성공/실패 시 모두 사용 가능)
-* data: 실제 응답 데이터 (성공 시)
-* errorCode: 에러 코드 (실패 시)
-* ResponseEntity와 함께 사용하여 HTTP 상태 코드도 함께 반환
-* */
-
+ * 공통 API 응답 포맷
+ * success: 요청 성공 여부
+ * message: 추가적인 메시지 (성공/실패 시 모두 사용 가능)
+ * data: 실제 응답 데이터 (성공 시)
+ * errorCode: 에러 코드 (실패 시)
+ * ResponseEntity와 함께 사용하여 HTTP 상태 코드도 함께 반환
+ * */
 
 @Getter
 @AllArgsConstructor
