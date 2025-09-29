@@ -3,8 +3,6 @@ package HearDay.spring.domain.article.entity;
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.articledetail.entity.ArticleDetail;
-import HearDay.spring.domain.discussion.entity.Discussion;
-import HearDay.spring.domain.userarticlebookmark.entity.UserArticleBookmark;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,12 +42,6 @@ public class Article extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private List<CategoryEnum> articleCategory;
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<UserArticleBookmark> userArticleBookmarkList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleDetail> articleDetailList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<Discussion> discussionList = new ArrayList<>();
 }

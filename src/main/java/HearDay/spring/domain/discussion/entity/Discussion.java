@@ -28,6 +28,6 @@ public class Discussion extends BaseEntity {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DisscussionContent> disscussionContentList = new ArrayList<>();
 }
