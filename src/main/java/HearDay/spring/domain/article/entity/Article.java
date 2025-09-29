@@ -42,6 +42,7 @@ public class Article extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private List<CategoryEnum> articleCategory;
 
+	@Builder.Default
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleDetail> articleDetailList = new ArrayList<>();
 }
