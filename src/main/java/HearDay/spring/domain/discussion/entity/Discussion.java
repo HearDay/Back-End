@@ -4,10 +4,9 @@ import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 
 @Entity
 @Getter
