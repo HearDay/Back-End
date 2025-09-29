@@ -16,6 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Id
@@ -44,12 +45,15 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private List<CategoryEnum> userCategory;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserWordBookmark> userWordBookmarkList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserArticleBookmark> userArticleBookmarkList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Discussion> discussionList = new ArrayList<>();
 }
