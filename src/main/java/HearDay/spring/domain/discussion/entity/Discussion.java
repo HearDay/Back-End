@@ -4,10 +4,9 @@ import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 
 @Entity
 @Getter
@@ -28,6 +27,7 @@ public class Discussion extends BaseEntity {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL)
+    @Builder.Default
+    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DisscussionContent> disscussionContentList = new ArrayList<>();
 }

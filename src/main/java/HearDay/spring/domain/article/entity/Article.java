@@ -3,14 +3,11 @@ package HearDay.spring.domain.article.entity;
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.articledetail.entity.ArticleDetail;
-import HearDay.spring.domain.discussion.entity.Discussion;
-import HearDay.spring.domain.userarticlebookmark.entity.UserArticleBookmark;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
 
 @Entity
 @Getter
@@ -37,19 +34,14 @@ public class Article extends BaseEntity {
 
     @ElementCollection(targetClass = CategoryEnum.class)
     @CollectionTable(
-            name = "article_category",  // 별도 테이블 생성
+            name = "article_category", // 별도 테이블 생성
             joinColumns = @JoinColumn(name = "article_id") // User 엔티티와 매핑
-    )
+            )
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private List<CategoryEnum> articleCategory;
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<UserArticleBookmark> userArticleBookmarkList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @Builder.Default
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleDetail> articleDetailList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<Discussion> discussionList = new ArrayList<>();
 }
