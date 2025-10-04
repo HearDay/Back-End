@@ -2,12 +2,10 @@ package HearDay.spring.domain.article.entity;
 
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
-import HearDay.spring.domain.articledetail.entity.ArticleDetail;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -32,16 +30,14 @@ public class Article extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
-    @ElementCollection(targetClass = CategoryEnum.class)
-    @CollectionTable(
-            name = "article_category", // 별도 테이블 생성
-            joinColumns = @JoinColumn(name = "article_id") // User 엔티티와 매핑
-            )
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private List<CategoryEnum> articleCategory;
+    private String imageUrl;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ArticleDetail> articleDetailList = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CategoryEnum articleCategory;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "article_detail_id")
+    private ArticleDetail articleDetail;
 }
