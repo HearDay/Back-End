@@ -15,8 +15,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // 개발/테스트 환경에서만
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/**").permitAll() // 회원가입 허용
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(withDefaults -> {}); // 기존 로그인 폼 유지
