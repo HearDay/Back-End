@@ -15,8 +15,7 @@ public class CommonExceptionHandler {
         log.error("CommonException: {}", e.getMessage());
 
         ErrorCode errorCode = e.getErrorCode();
-        return ResponseEntity
-                .status(errorCode.getStatus())
+        return ResponseEntity.status(errorCode.getStatus())
                 .body(CommonApiResponse.error(errorCode.getCode(), errorCode.getMessage()));
     }
 }

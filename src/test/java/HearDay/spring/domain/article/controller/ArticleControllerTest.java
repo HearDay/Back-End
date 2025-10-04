@@ -1,5 +1,17 @@
 package HearDay.spring.domain.article.controller;
 
+import HearDay.spring.common.TestConfig;
+import HearDay.spring.common.enums.CategoryEnum;
+import HearDay.spring.domain.article.dto.ArticleSearchDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,17 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import HearDay.spring.common.TestConfig;
-import HearDay.spring.common.enums.CategoryEnum;
-import HearDay.spring.domain.article.dto.ArticleSearchDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 public class ArticleControllerTest extends TestConfig {
 
@@ -59,7 +60,8 @@ public class ArticleControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.id").value(articleId))
                 .andExpect(jsonPath("$.data.title").exists())
-                .andExpect(jsonPath("$.data.content").exists())
+                .andExpect(jsonPath("$.data.detail.content").exists())
+                .andExpect(jsonPath("$.data.detail.ttsUrl").exists())
                 .andDo(print());
     }
 
