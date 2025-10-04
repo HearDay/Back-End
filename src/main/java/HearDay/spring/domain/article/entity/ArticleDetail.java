@@ -18,6 +18,9 @@ public class ArticleDetail extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String ttsUrl;
+
     @OneToOne(mappedBy = "articleDetail")
     private Article article;
 }
