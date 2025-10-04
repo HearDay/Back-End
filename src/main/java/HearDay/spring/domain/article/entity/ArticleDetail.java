@@ -21,6 +21,6 @@ public class ArticleDetail extends BaseEntity {
     @Column(nullable = false)
     private String ttsUrl;
 
-    @OneToOne(mappedBy = "articleDetail")
+    @OneToOne(mappedBy = "articleDetail", fetch = FetchType.LAZY)
     private Article article;
 }

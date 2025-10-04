@@ -27,6 +27,19 @@ public record ArticleResponseDto(
 
     public static ArticleResponseDto from(Article article) {
         ArticleResponseDtoDetail detail = null;
+
+        return new ArticleResponseDto(
+                article.getId(),
+                article.getTitle(),
+                article.getDescription(),
+                detail,
+                article.getImageUrl(),
+                article.getArticleCategory().name(),
+                article.getUpdatedAt());
+    }
+
+    public static ArticleResponseDto fromWithDetail(Article article) {
+        ArticleResponseDtoDetail detail = null;
         if (article.getArticleDetail() != null) {
             detail =
                     new ArticleResponseDtoDetail(

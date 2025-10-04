@@ -5,11 +5,12 @@ import HearDay.spring.domain.article.dto.ArticleSearchDto;
 import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.article.exception.ArticleException;
 import HearDay.spring.domain.article.repository.ArticleRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,6 @@ public class ArticleService {
                         .findByIdWithDetail(id)
                         .orElseThrow(() -> new ArticleException.ArticleNotFoundException(id));
 
-        return ArticleResponseDto.from(article);
+        return ArticleResponseDto.fromWithDetail(article);
     }
 }
