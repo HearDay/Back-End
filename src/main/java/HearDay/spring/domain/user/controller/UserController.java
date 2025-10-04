@@ -6,6 +6,7 @@ import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,8 @@ public class UserController {
             @RequestBody UserRequestDto request
     ) {
         userCommandService.registerUser(request);
-        return ResponseEntity.ok(CommonApiResponse.success("회원가입에 성공했습니다.", null));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("회원가입에 성공했습니다.", null));
     }
 
     @GetMapping("/check-id")
