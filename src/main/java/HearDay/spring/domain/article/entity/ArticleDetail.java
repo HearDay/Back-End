@@ -1,7 +1,6 @@
-package HearDay.spring.domain.articledetail.entity;
+package HearDay.spring.domain.article.entity;
 
 import HearDay.spring.common.entity.BaseEntity;
-import HearDay.spring.domain.article.entity.Article;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +18,9 @@ public class ArticleDetail extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
+    @Column(nullable = false)
+    private String ttsUrl;
+
+    @OneToOne(mappedBy = "articleDetail", fetch = FetchType.LAZY)
     private Article article;
 }

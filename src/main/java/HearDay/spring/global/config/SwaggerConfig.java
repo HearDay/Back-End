@@ -14,19 +14,19 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI HearDayAPI() {
-        Info info = new Info()
-                .title("HearDay API")
-                .description("HearDay API 명세서")
-                .version("1.0.0");
+        Info info = new Info().title("HearDay API").description("HearDay API 명세서").version("1.0.0");
 
         String jwtSchemeName = "JWT TOKEN";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
-        Components components = new Components()
-                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
-                        .name(jwtSchemeName)
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT"));
+        Components components =
+                new Components()
+                        .addSecuritySchemes(
+                                jwtSchemeName,
+                                new SecurityScheme()
+                                        .name(jwtSchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT"));
 
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
