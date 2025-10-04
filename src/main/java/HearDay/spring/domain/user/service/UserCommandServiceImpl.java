@@ -1,9 +1,8 @@
 package HearDay.spring.domain.user.service;
 
-import HearDay.spring.common.dto.code.status.ErrorStatus;
-import HearDay.spring.common.dto.exception.GeneralException;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,10 +18,10 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public void registerUser(UserRequestDto request) {
         if (userRepository.findByLoginId(request.getLoginId()).isPresent()) {
-            throw new GeneralException(ErrorStatus.LOGIN_ID_EXIST);
+            throw new UserException.UserLoginIdAlreadyExistException(request.getLoginId());
         }
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new GeneralException(ErrorStatus.EMAIL_EXIST);
+            throw new UserException.UserEmailAlreadyExistException(request.getEmail());
         }
 
         User user = User.builder()
