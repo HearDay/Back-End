@@ -45,6 +45,7 @@ public class ArticleControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.data", hasSize(10)))
                 .andExpect(jsonPath("$.data[0].id").exists())
                 .andExpect(jsonPath("$.data[0].title").exists())
+                .andExpect(jsonPath("$.data[0].detail").doesNotExist())
                 .andDo(print());
     }
 
