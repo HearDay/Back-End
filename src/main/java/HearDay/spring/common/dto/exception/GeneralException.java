@@ -18,4 +18,8 @@ public class GeneralException extends RuntimeException {
     public ErrorReasonDTO getErrorReasonHttpStatus(){
         return this.code.getReasonHttpStatus();
     }
+
+    public String getErrorCode() {
+        return this.code.getReason().getCode();
+    }
 }
