@@ -1,5 +1,6 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
@@ -62,5 +63,18 @@ public class UserCommandServiceImpl implements UserCommandService {
                 "[HEARDAY] 아이디 찾기 안내",
                 "회원님의 아이디는: " + user.getLoginId() + " 입니다."
         );
+    }
+
+    @Override
+    public void changePassword(UserPasswordRequestDto request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new UserException.UserNotFoundException(request.email()));
+
+        if (passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new UserException.UserPasswordSameAsOldException(request.password());
+        }
+
+        user.changePassword(request.password(), passwordEncoder);
+        userRepository.save(user);
     }
 }

@@ -1,7 +1,8 @@
 package HearDay.spring.domain.user.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
-import HearDay.spring.domain.user.dto.request.UserEmailRequestDTO;
+import HearDay.spring.domain.user.dto.request.UserEmailRequestDto;
+import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.service.UserCommandService;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -44,10 +44,20 @@ public class UserController {
     @PostMapping("/find-id")
     @Operation(summary = "아이디 찾기 API", description = "아이디 찾기에 사용하는 API입니다.")
     public ResponseEntity<CommonApiResponse<Void>> findUserId(
-            @RequestBody UserEmailRequestDTO request
+            @RequestBody UserEmailRequestDto request
     ) {
         userCommandService.sendUserIdToEmail(request.email());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("아이디를 이메일로 전송했습니다.", null));
+    }
+
+    @PostMapping("/password/reset")
+    @Operation(summary = "새 비밀번호 설정 API", description = "이메일 인증 후 새 비밀번호를 설정하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<Void>> resetPassword(
+            @RequestBody UserPasswordRequestDto request
+    ) {
+        userCommandService.changePassword(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("비밀번호 변경에 성공했습니다.", null));
     }
 }

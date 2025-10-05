@@ -24,4 +24,10 @@ public class UserException {
             super(ErrorCode.USER_EMAIL_EXIST, "이미 존재하는 이메일입니다. Email: " + email);
         }
     }
+
+    public static class UserPasswordSameAsOldException extends CommonException {
+        public UserPasswordSameAsOldException(String password) {
+            super(ErrorCode.USER_PASSWORD_SAME_AS_OLD, password);
+        }
+    }
 }
