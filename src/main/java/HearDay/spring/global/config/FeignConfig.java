@@ -26,8 +26,8 @@ public class FeignConfig {
         MappingJackson2XmlHttpMessageConverter xmlConverter =
                 new MappingJackson2XmlHttpMessageConverter(xmlMapper);
 
-        ObjectFactory<HttpMessageConverters> objectFactory = () ->
-                new HttpMessageConverters(xmlConverter);
+        ObjectFactory<HttpMessageConverters> objectFactory =
+                () -> new HttpMessageConverters(xmlConverter);
 
         return new SpringDecoder(objectFactory);
     }

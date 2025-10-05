@@ -22,16 +22,14 @@ public class DictionaryService {
     public List<String> searchWord(String word) {
         try {
 
-            DictionaryApiResponse response = dictionaryApiClient.searchWord(
-                    apiKey,
-                    word,
-                    "word"     // word: 표제어 검색
-            );
+            DictionaryApiResponse response =
+                    dictionaryApiClient.searchWord(
+                            apiKey, word, "word" // word: 표제어 검색
+                            );
             return parseResponse(word, response);
 
         } catch (Exception e) {
             return List.of("검색 중 오류가 발생했습니다.");
-
         }
     }
 
@@ -40,13 +38,16 @@ public class DictionaryService {
 
         if (response == null || response.getItem() == null || response.getItem().isEmpty()) {
             definitions.add("검색 결과가 없습니다.");
-        } else if(response.getItem().size() ==1){
+        } else if (response.getItem().size() == 1) {
             definitions.add(response.getItem().get(0).getSense().getDefinition());
-        }else {
-            int i =1;
+        } else {
+            int i = 1;
             for (DictionaryApiResponse.Item item : response.getItem()) {
-                if (item.getSense() != null && item.getSense().getDefinition() != null && item.getWord().equals(word)) {
-                    StringBuilder definition = new StringBuilder(removeHtmlTags(item.getSense().getDefinition()));
+                if (item.getSense() != null
+                        && item.getSense().getDefinition() != null
+                        && item.getWord().equals(word)) {
+                    StringBuilder definition =
+                            new StringBuilder(removeHtmlTags(item.getSense().getDefinition()));
                     if (!definition.isEmpty()) {
                         definition.insert(0, i++ + ". ");
                         definitions.add(definition.toString());

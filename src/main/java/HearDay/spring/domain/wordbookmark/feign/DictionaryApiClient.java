@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(
         name = "dictionaryApiClient",
         url = "https://krdict.korean.go.kr/api",
-        configuration = FeignConfig.class
-)
+        configuration = FeignConfig.class)
 public interface DictionaryApiClient {
 
     @GetMapping("/search")
     DictionaryApiResponse searchWord(
             @RequestParam("key") String apiKey,
             @RequestParam("q") String word,
-            @RequestParam("type1") String type1
-    );
+            @RequestParam("type1") String type1);
 }
