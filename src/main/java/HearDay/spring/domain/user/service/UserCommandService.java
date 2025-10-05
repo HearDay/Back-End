@@ -5,4 +5,5 @@ import HearDay.spring.domain.user.dto.response.UserResponseDto;
 
 public interface UserCommandService {
     UserResponseDto registerUser(UserRequestDto request);
+    void sendUserIdToEmail(String email);
 }

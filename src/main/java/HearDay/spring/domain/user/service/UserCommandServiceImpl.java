@@ -6,6 +6,7 @@ import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 //    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -47,6 +49,18 @@ public class UserCommandServiceImpl implements UserCommandService {
                 user.getPhone(),
                 user.getLevel(),
                 token
+        );
+    }
+
+    @Override
+    public void sendUserIdToEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserException.UserNotFoundException(email));
+
+        mailService.sendMail(
+                email,
+                "[HEARDAY] 아이디 찾기 안내",
+                "회원님의 아이디는: " + user.getLoginId() + " 입니다."
         );
     }
 }

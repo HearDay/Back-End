@@ -1,13 +1,13 @@
 package HearDay.spring.domain.user.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
+import HearDay.spring.domain.user.dto.request.UserEmailRequestDTO;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +39,15 @@ public class UserController {
         userQueryService.checkId(userLoginId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("중복된 아이디가 없습니다.", null));
+    }
+
+    @PostMapping("/find-id")
+    @Operation(summary = "아이디 찾기 API", description = "아이디 찾기에 사용하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<Void>> findUserId(
+            @RequestBody UserEmailRequestDTO request
+    ) {
+        userCommandService.sendUserIdToEmail(request.email());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("아이디를 이메일로 전송했습니다.", null));
     }
 }

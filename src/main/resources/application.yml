@@ -15,6 +15,17 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kau.hearday@gmail.com
+    password: kidl ghzp mtbc imkx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 #jwt:
 #  token:
 #    secretKey: heardayjwttokenauthentication

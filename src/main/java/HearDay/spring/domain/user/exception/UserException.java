@@ -8,6 +8,10 @@ public class UserException {
     public static class UserNotFoundException extends CommonException {
         public UserNotFoundException(Long id) {
             super(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다. ID: " + id); }
+
+        public UserNotFoundException(String email) {
+            super(ErrorCode.USER_NOT_FOUND, "해당 이메일의 사용자를 찾을 수 없습니다. email: " + email);
+        }
     }
 
     public static class UserLoginIdAlreadyExistException extends CommonException {
