@@ -23,17 +23,17 @@ public class UserController {
 
     @PostMapping("/")
     @Operation(summary = "회원가입 API", description = "회원가입시 사용하는 API입니다.")
-    public ResponseEntity<CommonApiResponse<Void>> signUp(
+    public ResponseEntity<CommonApiResponse<UserResponseDto>> signUp(
             @RequestBody UserRequestDto request
     ) {
-        userCommandService.registerUser(request);
+        UserResponseDto result = userCommandService.registerUser(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonApiResponse.success("회원가입에 성공했습니다.", null));
+                .body(CommonApiResponse.success("회원가입에 성공했습니다.", result));
     }
 
     @GetMapping("/check-id")
     @Operation(summary = "아이디 중복 확인 API", description = "회원가입시 아이디 중복 확인에 사용하는 API입니다.")
-    public ResponseEntity<CommonApiResponse<UserResponseDto>> checkUserId(
+    public ResponseEntity<CommonApiResponse<Void>> checkUserId(
             @RequestParam String userLoginId
     ) {
         userQueryService.checkId(userLoginId);
