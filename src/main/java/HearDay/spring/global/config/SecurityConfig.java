@@ -24,8 +24,9 @@ public class SecurityConfig {
                                         .permitAll() // Swagger 관련 리소스는 인증 없이 접근 허용
                                         .anyRequest()
                                         .authenticated() // 나머지는 인증 필요
-                        )
-                .formLogin(withDefaults -> {}); // 기존 로그인 폼 유지
+                )
+                .formLogin(withDefaults -> {
+                }); // 기존 로그인 폼 유지
 
         return http.build();
     }
