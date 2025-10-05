@@ -7,6 +7,7 @@ import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,8 @@ public class UserController {
     public ResponseEntity<CommonApiResponse<UserResponseDto>> checkUserId(
             @RequestParam String userLoginId
     ) {
-//        UserResponseDto responseDto = userQueryService.checkId(userLoginId);
-        return ResponseEntity.ok(CommonApiResponse.success("중복된 아이디가 없습니다.", null));
+        userQueryService.checkId(userLoginId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("중복된 아이디가 없습니다.", null));
     }
 }
