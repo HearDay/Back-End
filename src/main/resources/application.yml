@@ -15,8 +15,8 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri:
+#jwt:
+#  token:
+#    secretKey: heardayjwttokenauthentication
+#    expiration:
+#      access: 14400000

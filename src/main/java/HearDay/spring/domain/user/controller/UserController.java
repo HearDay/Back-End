@@ -2,6 +2,7 @@ package HearDay.spring.domain.user.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserCommandService userCommandService;
@@ -31,10 +32,10 @@ public class UserController {
 
     @GetMapping("/check-id")
     @Operation(summary = "아이디 중복 확인 API", description = "회원가입시 아이디 중복 확인에 사용하는 API입니다.")
-    public ResponseEntity<CommonApiResponse<Void>> checkUserId(
+    public ResponseEntity<CommonApiResponse<UserResponseDto>> checkUserId(
             @RequestParam String userLoginId
     ) {
-        userQueryService.checkId(userLoginId);
+//        UserResponseDto responseDto = userQueryService.checkId(userLoginId);
         return ResponseEntity.ok(CommonApiResponse.success("중복된 아이디가 없습니다.", null));
     }
 }
