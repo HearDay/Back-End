@@ -4,6 +4,7 @@ import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.domain.article.dto.ArticleResponseDto;
 import HearDay.spring.domain.article.dto.ArticleSearchDto;
 import HearDay.spring.domain.article.service.ArticleService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -21,6 +22,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping
+    @Operation(summary = "글 검색 및 조회", description = "표준국어대사전에서 단어를 검색합니다")
     public ResponseEntity<CommonApiResponse<List<ArticleResponseDto>>> getAllArticles(
             @RequestBody ArticleSearchDto search, @PageableDefault(size = 10) Pageable page) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -28,6 +30,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "글 세부정보 조회", description = "표준국어대사전에서 단어를 검색합니다")
     public ResponseEntity<CommonApiResponse<ArticleResponseDto>> getArticle(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(articleService.getArticle(id)));
