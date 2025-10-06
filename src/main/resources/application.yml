@@ -15,8 +15,6 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
-#jwt:
-#  token:
-#    secretKey: heardayjwttokenauthentication
-#    expiration:
-#      access: 14400000
+dictionary:
+  api:
+    key: ${DIC_API_KEY}
