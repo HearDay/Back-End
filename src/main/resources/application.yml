@@ -15,6 +15,19 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kau.hearday@gmail.com
+    password: ${GOOGLE_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: smtp.gmail.com
+          auth: true
+          starttls:
+            enable: true
 dictionary:
   api:
     key: ${DIC_API_KEY}

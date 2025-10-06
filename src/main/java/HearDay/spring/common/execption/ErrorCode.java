@@ -17,9 +17,10 @@ public enum ErrorCode {
     ARTICLE_TITLE_REQUIRED(400, "A003", "게시글 제목은 필수입니다"),
 
     // User 도메인
-    USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다.."),
+    USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
     USER_LOGIN_ID_EXIST(400, "U002", "이미 존재하는 아이디입니다."),
     USER_EMAIL_EXIST(400, "U003", "이미 가입된 이메일입니다."),
+    USER_PASSWORD_SAME_AS_OLD(400, "U004", "새 비밀번호는 이번 비밀번호와 같지 않아야 합니다."),
 
     // JWT
     INVALID_TOKEN(404, "J001", "d");
