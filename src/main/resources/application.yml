@@ -19,10 +19,12 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: kau.hearday@gmail.com
-    password: kidl ghzp mtbc imkx
+    password: ${GOOGLE_APP_PASSWORD}
     properties:
       mail:
         smtp:
+          ssl:
+            trust: smtp.gmail.com
           auth: true
           starttls:
             enable: true
