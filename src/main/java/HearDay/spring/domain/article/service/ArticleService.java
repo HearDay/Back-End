@@ -32,4 +32,10 @@ public class ArticleService {
 
         return ArticleResponseDto.fromWithDetail(article);
     }
+
+    public Article getArticleEntity(Long id) {
+        return articleRepository
+                .findByIdWithDetail(id)
+                .orElseThrow(() -> new ArticleException.ArticleNotFoundException(id));
+    }
 }
