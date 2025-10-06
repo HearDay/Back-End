@@ -28,8 +28,6 @@ spring:
           auth: true
           starttls:
             enable: true
-#jwt:
-#  token:
-#    secretKey: heardayjwttokenauthentication
-#    expiration:
-#      access: 14400000
+dictionary:
+  api:
+    key: ${DIC_API_KEY}

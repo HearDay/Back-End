@@ -51,6 +51,10 @@ dependencies {
 
 	// JavaMailSender
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+  //feign
+  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+  implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.3.0'
 }
 
 tasks.named('test') {
