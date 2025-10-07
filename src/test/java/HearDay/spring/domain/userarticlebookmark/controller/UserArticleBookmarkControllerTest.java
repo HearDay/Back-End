@@ -1,10 +1,5 @@
 package HearDay.spring.domain.userarticlebookmark.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +8,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -76,7 +76,7 @@ public class UserArticleBookmarkControllerTest {
                 .andDo(print());
     }
 
-    /*@Test
+    @Test
     @DisplayName("북마크 추가 - 중복 테스트")
     void addBookmarkDuplicate() throws Exception {
         // given
@@ -86,7 +86,7 @@ public class UserArticleBookmarkControllerTest {
         mockMvc.perform(
                         post("/api/article-bookmarks/{articleId}", articleId)
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
 
         // when & then - 중복 추가 시도
         mockMvc.perform(
@@ -94,7 +94,7 @@ public class UserArticleBookmarkControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
-    }*/
+    }
 
     @Test
     @DisplayName("북마크 삭제 - 존재하지 않는 북마크")

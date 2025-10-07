@@ -34,7 +34,7 @@ public class UserArticleBookmarkController {
 
     @PostMapping("/{articleId}")
     @Operation(summary = "북마크 추가", description = "특정 게시글을 북마크에 추가합니다")
-    public ResponseEntity<CommonApiResponse<Boolean>> addBookmark(
+    public ResponseEntity<CommonApiResponse<Void>> addBookmark(
             @Parameter(description = "게시글 ID", example = "1", required = true) @PathVariable
                     Long articleId) {
         userArticleBookmarkService.addBookmark(articleId);

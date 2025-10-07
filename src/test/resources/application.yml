@@ -9,7 +9,9 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
-
+  mail:
+    host: localhost
+    port: 0
 dictionary:
   api:
     key: key-for-test
