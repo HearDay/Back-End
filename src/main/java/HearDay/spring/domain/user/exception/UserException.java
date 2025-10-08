@@ -12,6 +12,10 @@ public class UserException {
         public UserNotFoundException(String email) {
             super(ErrorCode.USER_NOT_FOUND, "해당 이메일의 사용자를 찾을 수 없습니다. email: " + email);
         }
+
+        public UserNotFoundException(String loginId, String password) {
+            super(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.");
+        }
     }
 
     public static class UserLoginIdAlreadyExistException extends CommonException {

@@ -2,15 +2,20 @@ package HearDay.spring.domain.user.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.domain.user.dto.request.UserEmailRequestDto;
+import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
 import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
+import HearDay.spring.global.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -59,5 +64,15 @@ public class UserController {
         userCommandService.changePassword(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("비밀번호 변경에 성공했습니다.", null));
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "일반 로그인 API", description = "일반 로그인 API입니다.")
+    public ResponseEntity<CommonApiResponse<UserLoginResponseDto>> login(
+            @RequestBody UserLoginRequestDto request
+    ) {
+        UserLoginResponseDto result = userCommandService.loginUser(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
     }
 }
