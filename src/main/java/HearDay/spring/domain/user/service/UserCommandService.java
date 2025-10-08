@@ -7,7 +7,7 @@ import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 
 public interface UserCommandService {
-    UserResponseDto registerUser(UserRequestDto request);
+    UserLoginResponseDto registerUser(UserRequestDto request);
     void sendUserIdToEmail(String email);
     void changePassword(UserPasswordRequestDto request);
     UserLoginResponseDto loginUser(UserLoginRequestDto request);

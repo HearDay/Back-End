@@ -27,7 +27,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserResponseDto registerUser(UserRequestDto request) {
+    public UserLoginResponseDto registerUser(UserRequestDto request) {
         if (userRepository.findByLoginId(request.loginId()).isPresent()) {
             throw new UserException.UserLoginIdAlreadyExistException(request.loginId());
         }
@@ -46,16 +46,10 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         userRepository.save(user);
 
-//        String token = jwtTokenProvider.generateToken(user.getEmail());
-        String token = null;
+        String token = jwtTokenProvider.generateToken(request.loginId());
 
-        return new UserResponseDto(
-                user.getId(),
-                user.getLoginId(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getLevel(),
-                token
+        return new UserLoginResponseDto(
+            token
         );
     }
 
