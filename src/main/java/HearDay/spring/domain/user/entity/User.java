@@ -3,7 +3,6 @@ package HearDay.spring.domain.user.entity;
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.discussion.entity.Discussion;
-import HearDay.spring.domain.userarticlebookmark.entity.UserArticleBookmark;
 import HearDay.spring.domain.wordbookmark.entity.UserWordBookmark;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -48,10 +47,6 @@ public class User extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserWordBookmark> userWordBookmarkList = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserArticleBookmark> userArticleBookmarkList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

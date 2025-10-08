@@ -3,12 +3,11 @@ package HearDay.spring.domain.wordbookmark.service;
 
 import HearDay.spring.domain.wordbookmark.feign.DictionaryApiClient;
 import HearDay.spring.domain.wordbookmark.feign.DictionaryApiResponse;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

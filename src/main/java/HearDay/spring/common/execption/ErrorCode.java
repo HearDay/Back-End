@@ -23,7 +23,11 @@ public enum ErrorCode {
     USER_PASSWORD_SAME_AS_OLD(400, "U004", "새 비밀번호는 이번 비밀번호와 같지 않아야 합니다."),
 
     // JWT
-    INVALID_TOKEN(404, "J001", "d");
+    INVALID_TOKEN(404, "J001", "d"),
+
+    // UserArticleBookmark 도메인
+    ARTICLE_BOOKMARK_ALREADY(400, "UA001", "이미 북마크한 게시글입니다."),
+    ARTICLE_BOOKMARK_NOT_EXISTS(400, "UA002", "북마크가 존재하지 않습니다.");
 
     private final int status;
     private final String code;

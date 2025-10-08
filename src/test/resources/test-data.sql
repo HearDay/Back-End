@@ -45,3 +45,34 @@ INSERT INTO article (origin_link, publish_date, title, description, image_url, a
                                                                                                                                                 ('https://tech.example.com/18', '2025-10-04 14:00:00', '마이크로서비스 아키텍처 설계', 'MSA 설계 패턴과 베스트 프랙티스', 'https://example.com/image18.jpg', 'IT', 18, NOW(), NOW()),
                                                                                                                                                 ('https://tech.example.com/19', '2025-10-04 16:30:00', 'TypeScript 완벽 가이드', 'TypeScript 기초부터 고급까지', 'https://example.com/image19.jpg', 'IT', 19, NOW(), NOW()),
                                                                                                                                                 ('https://news.example.com/20', '2025-10-04 18:00:00', '2025년 IT 트렌드 전망', '내년 IT 산업 전망과 기술 트렌드', 'https://example.com/image20.jpg', 'IT', 20, NOW(), NOW());
+
+-- User 더미 데이터 (3명)
+INSERT INTO users (login_id, password, email, phone, level, created_at, updated_at) VALUES
+                                                                                         ('testuser1', 'password123', 'test1@example.com', '010-1234-5678', 1, NOW(), NOW()),
+                                                                                         ('testuser2', 'password123', 'test2@example.com', '010-2345-6789', 2, NOW(), NOW()),
+                                                                                         ('testuser3', 'password123', 'test3@example.com', '010-3456-7890', 3, NOW(), NOW());
+
+-- User Category 더미 데이터
+INSERT INTO user_category (user_id, user_category) VALUES
+                                                        (1, 'IT'),
+                                                        (1, '경제'),
+                                                        (2, 'IT'),
+                                                        (3, '경제');
+
+-- UserArticleBookmark 더미 데이터 (테스트용)
+INSERT INTO user_article_bookmark (user_id, article_id, created_at, updated_at) VALUES
+                                                                                     (1, 1, NOW(), NOW()),
+                                                                                     (1, 3, NOW(), NOW()),
+                                                                                     (1, 5, NOW(), NOW()),
+                                                                                     (1, 6, NOW(), NOW()),
+                                                                                     (1, 8, NOW(), NOW()),
+                                                                                     (1, 11, NOW(), NOW()),
+                                                                                     (1, 14, NOW(), NOW()),
+                                                                                     (1, 16, NOW(), NOW()),
+                                                                                     (1, 18, NOW(), NOW()),
+                                                                                     (1, 19, NOW(), NOW()),
+                                                                                     (2, 2, NOW(), NOW()),
+                                                                                     (2, 4, NOW(), NOW()),
+                                                                                     (2, 7, NOW(), NOW()),
+                                                                                     (3, 13, NOW(), NOW()),
+                                                                                     (3, 17, NOW(), NOW());
