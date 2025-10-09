@@ -1,13 +1,18 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
 import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
+import HearDay.spring.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +23,11 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
-//    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserResponseDto registerUser(UserRequestDto request) {
+    public UserLoginResponseDto registerUser(UserRequestDto request) {
         if (userRepository.findByLoginId(request.loginId()).isPresent()) {
             throw new UserException.UserLoginIdAlreadyExistException(request.loginId());
         }
@@ -40,16 +46,10 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         userRepository.save(user);
 
-//        String token = jwtTokenProvider.generateToken(user.getEmail());
-        String token = null;
+        String token = jwtTokenProvider.generateToken(request.loginId());
 
-        return new UserResponseDto(
-                user.getId(),
-                user.getLoginId(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getLevel(),
-                token
+        return new UserLoginResponseDto(
+            token
         );
     }
 
@@ -76,5 +76,18 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         user.changePassword(request.password(), passwordEncoder);
         userRepository.save(user);
+    }
+
+    @Override
+    public UserLoginResponseDto loginUser(UserLoginRequestDto request) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(request.LoginId(), request.password());
+
+        authenticationManager.authenticate(authenticationToken);
+        String token = jwtTokenProvider.generateToken(request.LoginId());
+
+        return new UserLoginResponseDto(
+                token
+        );
     }
 }
