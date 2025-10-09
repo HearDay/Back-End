@@ -16,7 +16,7 @@ public class JwtTokenProvider {
     private final SecretKey key;
     private final long EXPIRATION_TIME = 1000L * 60 * 60 * 2; // 2시간
 
-    public JwtTokenProvider(@Value("${JWT_SECRET_KEY}") String secretKey) {
+    public JwtTokenProvider(@Value("${jwt.secret.key}") String secretKey) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
