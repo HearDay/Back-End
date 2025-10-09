@@ -1,4 +1,4 @@
-package HearDay.spring.domain.user.service;
+package HearDay.spring.domain.user.service.CustomUserDetailsService;
 
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
@@ -6,8 +6,6 @@ import HearDay.spring.domain.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -23,10 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UserException.UserNotFoundException("User not found"));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getLoginId(),
-                user.getPassword(),
-                Collections.emptyList()
-        );
+        return new CustomUserDetails(user); // 커스텀 UserDetails 반환
     }
 }
