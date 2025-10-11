@@ -5,6 +5,7 @@ import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.wordBookmark.dto.request.WordRequestDto;
 import HearDay.spring.domain.wordBookmark.dto.response.WordDescriptionResponseDto;
 import HearDay.spring.domain.wordBookmark.service.wordService.WordCommandService;
+import HearDay.spring.domain.wordBookmark.service.wordService.WordQueryService;
 import HearDay.spring.global.annotation.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class WordController {
 
     private final WordCommandService wordCommandService;
+    private final WordQueryService wordQueryService;
 
     @PostMapping("/")
     @Operation(summary = "단어 저장 API", description = "단어를 내 단어장에 저장시 사용하는 API입니다.")
@@ -29,5 +31,17 @@ public class WordController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("단어 저장에 성공했습니다.", null));
+    }
+
+    @GetMapping("/{wordsId}")
+    @Operation(summary = "단어 뜻 조회 API", description = "저장된 단어 뜻 확인시 사용하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<WordDescriptionResponseDto>> getWord(
+            @AuthUser User user,
+            @PathVariable Long wordsId
+    ) {
+        WordDescriptionResponseDto result = wordQueryService.getWordDescription(user, wordsId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("단어 뜻 조회에 성공했습니다.", result));
     }
 }

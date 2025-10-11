@@ -27,7 +27,10 @@ public enum ErrorCode {
 
     // UserArticleBookmark 도메인
     ARTICLE_BOOKMARK_ALREADY(400, "UA001", "이미 북마크한 게시글입니다."),
-    ARTICLE_BOOKMARK_NOT_EXISTS(400, "UA002", "북마크가 존재하지 않습니다.");
+    ARTICLE_BOOKMARK_NOT_EXISTS(400, "UA002", "북마크가 존재하지 않습니다."),
+
+    // UserWordBookmark 도메인
+    WORD_BOOKMARK_NOT_EXISTS(400, "UW001", "북마크가 존재하지 않습니다.");
 
     private final int status;
     private final String code;
