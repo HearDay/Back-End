@@ -4,6 +4,7 @@ import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.wordBookmark.dto.request.WordRequestDto;
 import HearDay.spring.domain.wordBookmark.dto.response.WordByDateResponseDto;
+import HearDay.spring.domain.wordBookmark.dto.response.WordCountResponseDto;
 import HearDay.spring.domain.wordBookmark.dto.response.WordDescriptionResponseDto;
 import HearDay.spring.domain.wordBookmark.service.wordService.WordCommandService;
 import HearDay.spring.domain.wordBookmark.service.wordService.WordQueryService;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/words")
@@ -51,13 +51,26 @@ public class WordController {
 
     @GetMapping("/date")
     @Operation(summary = "특정 날짜의 단어 목록 조회 API", description = "원하는 날짜를 쿼리 파라미터로 보내면 그날 저장된 단어를 출력하는 API입니다.")
-    public ResponseEntity<CommonApiResponse<List<WordByDateResponseDto>>> getWordDates(
+    public ResponseEntity<CommonApiResponse<WordByDateResponseDto>> getWordDates(
             @AuthUser User user,
             @RequestParam LocalDate date
     ) {
-        List<WordByDateResponseDto> result = wordQueryService.getWordDates(user, date);
+        WordByDateResponseDto result = wordQueryService.getWordDates(user, date);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("해당 날짜의 단어 조회에 성공했습니다.", result));
+    }
+
+    @GetMapping("/statistics")
+    @Operation(summary = "월별 저장된 단어 개수 조회 API", description = "입력한 월별 저장된 단어 개수를 출력하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<WordCountResponseDto>> getWordCounts(
+            @AuthUser User user,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        WordCountResponseDto result = wordQueryService.getWordCounts(user, year, month);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("해당 달의 단어 개수 조회에 성공했습니다.", result));
     }
 }
