@@ -3,7 +3,7 @@ package HearDay.spring.domain.user.entity;
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.discussion.entity.Discussion;
-import HearDay.spring.domain.wordbookmark.entity.UserWordBookmark;
+import HearDay.spring.domain.wordBookmark.entity.UserWordBookmark;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,0 +1,33 @@
+package HearDay.spring.domain.wordBookmark.controller;
+
+import HearDay.spring.common.dto.response.CommonApiResponse;
+import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.wordBookmark.dto.request.WordRequestDto;
+import HearDay.spring.domain.wordBookmark.dto.response.WordDescriptionResponseDto;
+import HearDay.spring.domain.wordBookmark.service.wordService.WordCommandService;
+import HearDay.spring.global.annotation.AuthUser;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/words")
+@RequiredArgsConstructor
+public class WordController {
+
+    private final WordCommandService wordCommandService;
+
+    @PostMapping("/")
+    @Operation(summary = "단어 저장 API", description = "단어를 내 단어장에 저장시 사용하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<Void>> saveWord(
+            @AuthUser User user,
+            @RequestBody WordRequestDto request
+    ) {
+        wordCommandService.createWordBookmark(user, request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("단어 저장에 성공했습니다.", null));
+    }
+}
