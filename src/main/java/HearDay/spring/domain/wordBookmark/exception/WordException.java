@@ -10,4 +10,10 @@ public class WordException {
             super(ErrorCode.WORD_BOOKMARK_NOT_EXISTS, "북마크가 존재하지 않습니다.");
         }
     }
+
+    public static class WordAlreadyBookmarkedException extends CommonException {
+        public WordAlreadyBookmarkedException() {
+            super(ErrorCode.WORD_ALREADY_BOOKMARKED_TODAY);
+        }
+    }
 }

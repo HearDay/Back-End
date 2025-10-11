@@ -5,4 +5,5 @@ import HearDay.spring.domain.wordBookmark.dto.response.WordDescriptionResponseDt
 
 public interface WordRepositoryCustom {
     WordDescriptionResponseDto findWordByUserAndWordId(User user, Long wordsId);
+    boolean checkTodayWordBookmark(User user, String word);
 }
