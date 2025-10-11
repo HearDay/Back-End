@@ -1,6 +1,7 @@
 package HearDay.spring.domain.wordBookmark.repository;
 
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.wordBookmark.dto.response.WordByDateResponseDto;
 import HearDay.spring.domain.wordBookmark.dto.response.WordDescriptionResponseDto;
 import HearDay.spring.domain.wordBookmark.entity.QUserWordBookmark;
 import HearDay.spring.domain.wordBookmark.entity.UserWordBookmark;
@@ -11,12 +12,14 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class WordRepositoryImpl implements WordRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public WordDescriptionResponseDto findWordByUserAndWordId(User user, Long wordsId) {
         QUserWordBookmark userWordBookmark = QUserWordBookmark.userWordBookmark;
 
@@ -38,6 +41,7 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
         );
     }
 
+    @Override
     public boolean checkTodayWordBookmark(User user, String word) {
         QUserWordBookmark userWordBookmark = QUserWordBookmark.userWordBookmark;
 
@@ -56,5 +60,21 @@ public class WordRepositoryImpl implements WordRepositoryCustom {
                 .fetchFirst() != null;
 
         return exists;
+    }
+
+    @Override
+    public List<UserWordBookmark> getWordByDates(User user, LocalDate date) {
+        QUserWordBookmark userWordBookmark = QUserWordBookmark.userWordBookmark;
+
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+
+        return queryFactory
+                .selectFrom(userWordBookmark)
+                .where(
+                        userWordBookmark.user.eq(user),
+                        userWordBookmark.createdAt.between(startOfDay, endOfDay)
+                )
+                .fetch();
     }
 }

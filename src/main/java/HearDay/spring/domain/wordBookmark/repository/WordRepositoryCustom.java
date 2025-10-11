@@ -2,8 +2,13 @@ package HearDay.spring.domain.wordBookmark.repository;
 
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.wordBookmark.dto.response.WordDescriptionResponseDto;
+import HearDay.spring.domain.wordBookmark.entity.UserWordBookmark;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public interface WordRepositoryCustom {
     WordDescriptionResponseDto findWordByUserAndWordId(User user, Long wordsId);
     boolean checkTodayWordBookmark(User user, String word);
+    List<UserWordBookmark> getWordByDates(User user, LocalDate date);
 }
