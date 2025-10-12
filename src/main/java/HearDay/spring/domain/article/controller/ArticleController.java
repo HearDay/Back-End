@@ -24,7 +24,7 @@ public class ArticleController {
     @PostMapping
     @Operation(summary = "글 검색 및 조회", description = "표준국어대사전에서 단어를 검색합니다")
     public ResponseEntity<CommonApiResponse<List<ArticleResponseDto>>> getAllArticles(
-            @RequestBody ArticleSearchDto search, @PageableDefault(size = 10) Pageable page) {
+            @RequestBody(required = false) ArticleSearchDto search, @PageableDefault(size = 10) Pageable page) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(articleService.searchArticles(search, page)));
     }
