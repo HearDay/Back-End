@@ -31,3 +31,6 @@ spring:
 dictionary:
   api:
     key: ${DIC_API_KEY}
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
