@@ -3,7 +3,6 @@ package HearDay.spring.domain.article.entity;
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,7 @@ public class Article extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String originLink;
 
     @Column(nullable = false)
@@ -31,7 +30,7 @@ public class Article extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
