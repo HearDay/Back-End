@@ -15,3 +15,7 @@ spring:
 dictionary:
   api:
     key: key-for-test
+
+jwt:
+  secret:
+    key: testsecretkeyforjwttestsecretkeyforjwttestsecretkeyforjwttestsecretkeyforjwt
