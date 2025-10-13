@@ -25,23 +25,20 @@ public class UserArticleBookmarkService {
 
     private final UserQueryService userQueryService;
 
-    public List<ArticleResponseDto> getBookmarkArticles(Pageable page) {
-        Long userId = 1L; // TODO: 임시 userId, 추후 SecurityContext에서 userId 가져오도록 변경
+    public List<ArticleResponseDto> getBookmarkArticles(Pageable page, Long userId) {
         return articleBookmarkRepository.findByUserIdWithArticle(userId, page).stream()
                 .map(articleBookmark -> ArticleResponseDto.from(articleBookmark.getArticle()))
                 .toList();
     }
 
     @Transactional
-    public void addBookmark(Long articleId) {
-        Long userId = 1L; // TODO: 임시 userId, 추후 SecurityContext에서 userId 가져오도록 변경
+    public void addBookmark(Long articleId, User user) {
 
-        if (isBookmarked(userId, articleId)) {
+        if (isBookmarked(user.getId(), articleId)) {
             throw new UserArticleBookmarkException.ArticleAlreadyBookmarkException(articleId);
         }
 
         Article article = articleService.getArticleEntity(articleId);
-        User user = userQueryService.getUserEntity(userId);
 
         UserArticleBookmark bookmark =
                 UserArticleBookmark.builder().user(user).article(article).build();
@@ -49,9 +46,7 @@ public class UserArticleBookmarkService {
         articleBookmarkRepository.save(bookmark);
     }
 
-    public void removeBookmark(Long articleId) {
-        Long userId = 1L; // TODO: 임시 userId, 추후 SecurityContext에서 userId 가져오도록 변경
-
+    public void removeBookmark(Long articleId, Long userId) {
         UserArticleBookmark bookmark =
                 articleBookmarkRepository
                         .findByUserIdAndArticleId(userId, articleId)

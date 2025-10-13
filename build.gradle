@@ -67,7 +67,7 @@ tasks.named('test') {
 }
 
 
-spotless {
+/*spotless {
 	java {
 		// 구글 자바 코드 스타일
 		googleJavaFormat("1.17.0")
@@ -78,8 +78,10 @@ spotless {
 		trimTrailingWhitespace()
 		endWithNewline()
 	}
-}
+}*/
 
+/*
 tasks.named('build') {
 	dependsOn 'spotlessApply'
 }
+*/

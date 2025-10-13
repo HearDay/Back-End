@@ -5,13 +5,14 @@ import HearDay.spring.domain.article.dto.ArticleResponseDto;
 import HearDay.spring.domain.article.dto.ArticleSearchDto;
 import HearDay.spring.domain.article.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/articles")
@@ -23,7 +24,7 @@ public class ArticleController {
     @PostMapping
     @Operation(summary = "글 검색 및 조회", description = "표준국어대사전에서 단어를 검색합니다")
     public ResponseEntity<CommonApiResponse<List<ArticleResponseDto>>> getAllArticles(
-            @RequestBody ArticleSearchDto search, @PageableDefault(size = 10) Pageable page) {
+            @RequestBody(required = false) ArticleSearchDto search, @PageableDefault(size = 10) Pageable page) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(articleService.searchArticles(search, page)));
     }
