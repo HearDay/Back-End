@@ -22,7 +22,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping
-    @Operation(summary = "글 검색 및 조회", description = "표준국어대사전에서 단어를 검색합니다")
+    @Operation(summary = "글 검색 및 조회", description = "글을 검색하고 페이징하여 조회합니다")
     public ResponseEntity<CommonApiResponse<List<ArticleResponseDto>>> getAllArticles(
             @RequestBody(required = false) ArticleSearchDto search, @PageableDefault(size = 10) Pageable page) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -30,7 +30,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "글 세부정보 조회", description = "표준국어대사전에서 단어를 검색합니다")
+    @Operation(summary = "글 세부정보 조회", description = "특정 글의 세부정보를 조회합니다")
     public ResponseEntity<CommonApiResponse<ArticleResponseDto>> getArticle(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(articleService.getArticle(id)));
