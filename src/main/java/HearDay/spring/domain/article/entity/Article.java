@@ -18,7 +18,7 @@ public class Article extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT", unique = true)
     private String originLink;
 
     @Column(nullable = false)

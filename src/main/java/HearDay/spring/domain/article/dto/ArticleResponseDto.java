@@ -15,7 +15,7 @@ public record ArticleResponseDto(
         @Schema(description = "상세정보") ArticleResponseDtoDetail detail,
         @Schema(description = "이미지 URL", example = "https://example.com/image.jpg") String imageUrl,
         @Schema(description = "카테고리", example = "IT") String category,
-        @Schema(description = "수정 일시", example = "2025-10-04T15:20:00") LocalDateTime updatedAt) {
+        @Schema(description = "게시 날짜", example = "2025-10-04T15:20:00") LocalDateTime updatedAt) {
 
     public record ArticleResponseDtoDetail(
             @Schema(
@@ -35,7 +35,7 @@ public record ArticleResponseDto(
                 detail,
                 article.getImageUrl(),
                 article.getArticleCategory().name(),
-                article.getUpdatedAt());
+                article.getPublishDate());
     }
 
     public static ArticleResponseDto fromWithDetail(Article article) {
