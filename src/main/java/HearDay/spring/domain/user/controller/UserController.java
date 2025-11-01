@@ -13,6 +13,7 @@ import HearDay.spring.domain.user.service.UserQueryService;
 import HearDay.spring.global.annotation.AuthUser;
 import HearDay.spring.global.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,5 +77,12 @@ public class UserController {
         UserLoginResponseDto result = userCommandService.loginUser(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
+    }
+
+    @GetMapping("/login/kakao")
+    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 API입니다.")
+    public ResponseEntity<CommonApiResponse<UserLoginResponseDto>> loginKakao(
+            @RequestParam String code, HttpServletResponse httpServletResponse) {
+        UserLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
     }
 }

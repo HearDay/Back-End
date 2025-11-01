@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/api/**").permitAll() // Swagger 관련 리소스는 인증 없이 접근 허용
+                                "/api/users/**").permitAll() // Swagger 관련 리소스는 인증 없이 접근 허용
                         .anyRequest().authenticated() // 나머지는 인증 필요
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

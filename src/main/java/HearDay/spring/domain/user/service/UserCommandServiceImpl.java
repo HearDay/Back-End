@@ -3,14 +3,15 @@ package HearDay.spring.domain.user.service;
 import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
 import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
-import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
 import HearDay.spring.global.jwt.JwtTokenProvider;
+import HearDay.spring.global.util.KakaoUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.MailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,7 +50,8 @@ public class UserCommandServiceImpl implements UserCommandService {
         String token = jwtTokenProvider.generateToken(request.loginId());
 
         return new UserLoginResponseDto(
-            token
+            token,
+                null
         );
     }
 
@@ -87,7 +89,13 @@ public class UserCommandServiceImpl implements UserCommandService {
         String token = jwtTokenProvider.generateToken(request.LoginId());
 
         return new UserLoginResponseDto(
-                token
+                token,
+                null // refresh token
         );
+    }
+
+    @Override
+    public UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+        KakaoResponseDto oAuthToken = KakaoUtil.requestToken(code);
     }
 }

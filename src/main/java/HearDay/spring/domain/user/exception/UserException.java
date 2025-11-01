@@ -34,4 +34,10 @@ public class UserException {
             super(ErrorCode.USER_PASSWORD_SAME_AS_OLD, password);
         }
     }
+
+    public static class KakoException extends CommonException {
+        public KakoException() {
+            super(ErrorCode.PARSING_ERROR);
+        }
+    }
 }
