@@ -32,3 +32,7 @@ dictionary:
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
+kakao:
+  auth:
+    client: ${KAKAO_CLIENT_ID}
+    redirect: ${KAKAO_REDIRECT_URL}

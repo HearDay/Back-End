@@ -1,15 +1,13 @@
 package HearDay.spring.domain.user.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
-import HearDay.spring.domain.user.dto.request.UserEmailRequestDto;
-import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
-import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
-import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.domain.user.dto.request.*;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +67,16 @@ public class UserController {
             @RequestBody UserLoginRequestDto request
     ) {
         UserLoginResponseDto result = userCommandService.loginUser(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
+    }
+
+    @GetMapping("/login/kakao")
+    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 API입니다.")
+    public ResponseEntity<CommonApiResponse<KakaoRequestDto>> loginKakao(
+            @RequestParam String code, HttpServletResponse httpServletResponse
+    ) {
+        KakaoRequestDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
     }

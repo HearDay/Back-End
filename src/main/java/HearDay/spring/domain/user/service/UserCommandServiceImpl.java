@@ -1,14 +1,18 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.domain.user.dto.request.KakaoRequestDto;
 import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
 import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
 import HearDay.spring.global.jwt.JwtTokenProvider;
+import HearDay.spring.global.util.KakaoUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailSender;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +29,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final MailService mailService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final KakaoUtil kakaoUtil;
 
     @Override
     public UserLoginResponseDto registerUser(UserRequestDto request) {
@@ -89,5 +94,11 @@ public class UserCommandServiceImpl implements UserCommandService {
         return new UserLoginResponseDto(
                 token
         );
+    }
+
+    @Override
+    public KakaoRequestDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+        KakaoResponseDto token = kakaoUtil.requestToken(code);
+        return kakaoUtil.requestProfile(token);
     }
 }
