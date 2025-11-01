@@ -97,8 +97,31 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public KakaoRequestDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
-        KakaoResponseDto token = kakaoUtil.requestToken(code);
-        return kakaoUtil.requestProfile(token);
+    public UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+        KakaoResponseDto oAuthtoken = kakaoUtil.requestToken(code);
+        KakaoRequestDto kakaoProfile = kakaoUtil.requestProfile(oAuthtoken);
+        String email = kakaoProfile.kakao_account().email();
+
+        User user = userRepository.findByEmail(email)
+                .orElseGet(() -> createNewUser(kakaoProfile));
+
+        String token = jwtTokenProvider.generateToken(user.getEmail());
+        httpServletResponse.addHeader("Authorization", "Bearer " + token);
+
+        return new UserLoginResponseDto(
+                token
+        );
+    }
+
+    private User createNewUser(KakaoRequestDto kakaoProfile) {
+        User user = User.builder()
+                .loginId(kakaoProfile.kakao_account().profile().nickname())
+                .password(null)
+                .email(kakaoProfile.kakao_account().email())
+                .phone(null)
+                .level(1)
+                .userCategory(null)
+                .build();
+        return userRepository.save(user);
     }
 }

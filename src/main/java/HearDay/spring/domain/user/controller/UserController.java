@@ -4,6 +4,7 @@ import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.domain.user.dto.request.*;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
+import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,10 +74,10 @@ public class UserController {
 
     @GetMapping("/login/kakao")
     @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 API입니다.")
-    public ResponseEntity<CommonApiResponse<KakaoRequestDto>> loginKakao(
+    public ResponseEntity<CommonApiResponse<UserLoginResponseDto>> loginKakao(
             @RequestParam String code, HttpServletResponse httpServletResponse
     ) {
-        KakaoRequestDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
+        UserLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
     }
