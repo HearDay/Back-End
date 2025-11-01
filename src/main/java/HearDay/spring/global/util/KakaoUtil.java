@@ -1,59 +1,68 @@
 package HearDay.spring.global.util;
 
+import HearDay.spring.domain.user.dto.request.KakaoRequestDto;
 import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
 import HearDay.spring.domain.user.exception.UserException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class KakaoUtil {
 
     @Value("${kakao.auth.client}")
-    private static String client;
+    private String client;
 
     @Value("${kakao.auth.redirect}")
-    private static String redirect;
+    private String redirect;
 
-    public static KakaoResponseDto requestToken(String accessCode) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final WebClient webClient = WebClient.create();
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", client);
-        params.add("redirect_uri", redirect);
-        params.add("code", accessCode);
-
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        KakaoResponseDto oAuthToken = null;
+    public KakaoResponseDto requestToken(String accessCode) {
+        String response = webClient.post()
+                .uri("https://kauth.kakao.com/oauth/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData("grant_type", "authorization_code")
+                        .with("client_id", client)
+                        .with("redirect_uri", redirect)
+                        .with("code", accessCode))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
 
         try {
-            oAuthToken = objectMapper.readValue(response.getBody(), KakaoResponseDto.class);
-            log.info("oAuthToken: {}", oAuthToken.accessToken());
+            KakaoResponseDto token = objectMapper.readValue(response, KakaoResponseDto.class);
+            log.info("access_token: {}", token.accessToken());
+            return token;
         } catch (JsonProcessingException e) {
+            log.error("Token parsing error", e);
             throw new UserException.KakoException();
         }
-        return oAuthToken;
+    }
+
+    public KakaoRequestDto requestProfile(KakaoResponseDto oAuthToken) {
+        String response = webClient.get()
+                .uri("https://kapi.kakao.com/v2/user/me")
+                .header("Authorization", "Bearer " + oAuthToken.accessToken())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        try {
+            return objectMapper.readValue(response, KakaoRequestDto.class);
+        } catch (JsonProcessingException e) {
+            log.error("Profile parsing error", e);
+            throw new UserException.KakoException();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.domain.user.dto.request.KakaoRequestDto;
 import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
 import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
@@ -12,5 +13,5 @@ public interface UserCommandService {
     void sendUserIdToEmail(String email);
     void changePassword(UserPasswordRequestDto request);
     UserLoginResponseDto loginUser(UserLoginRequestDto request);
-    UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse);
+    KakaoRequestDto loginKakaoUser(String code, HttpServletResponse httpServletResponse);
 }

@@ -1,5 +1,6 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.domain.user.dto.request.KakaoRequestDto;
 import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
 import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
@@ -26,6 +27,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final MailService mailService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final KakaoUtil kakaoUtil;
 
     @Override
     public UserLoginResponseDto registerUser(UserRequestDto request) {
@@ -95,7 +97,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
-        KakaoResponseDto oAuthToken = KakaoUtil.requestToken(code);
+    public KakaoRequestDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+        KakaoResponseDto token = kakaoUtil.requestToken(code);
+        return kakaoUtil.requestProfile(token);
     }
 }
