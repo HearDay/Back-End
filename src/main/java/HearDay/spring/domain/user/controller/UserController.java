@@ -7,17 +7,12 @@ import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
-import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
-import HearDay.spring.global.annotation.AuthUser;
-import HearDay.spring.global.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,7 +23,7 @@ public class UserController {
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
 
-    @PostMapping("/")
+    @PostMapping
     @Operation(summary = "회원가입 API", description = "회원가입시 사용하는 API입니다.")
     public ResponseEntity<CommonApiResponse<UserLoginResponseDto>> signUp(
             @RequestBody UserRequestDto request
