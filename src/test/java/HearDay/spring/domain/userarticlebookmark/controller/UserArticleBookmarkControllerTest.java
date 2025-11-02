@@ -27,8 +27,7 @@ public class UserArticleBookmarkControllerTest {
 
     @BeforeEach
     void setUp() {
-        // ✅ login_id = testuser1 기준으로 JWT 생성
-        token = jwtTokenProvider.generateToken("testuser1");
+        token = jwtTokenProvider.generateToken("test1@example.com");
     }
 
     @Test

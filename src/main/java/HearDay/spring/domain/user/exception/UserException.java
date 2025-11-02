@@ -18,11 +18,6 @@ public class UserException {
         }
     }
 
-    public static class UserLoginIdAlreadyExistException extends CommonException {
-        public UserLoginIdAlreadyExistException(String loginId) {
-            super(ErrorCode.USER_LOGIN_ID_EXIST, "이미 존재하는 아이디입니다. LoginId: " + loginId); }
-    }
-
     public static class UserEmailAlreadyExistException extends CommonException {
         public UserEmailAlreadyExistException(String email) {
             super(ErrorCode.USER_EMAIL_EXIST, "이미 존재하는 이메일입니다. Email: " + email);
@@ -32,6 +27,12 @@ public class UserException {
     public static class UserPasswordSameAsOldException extends CommonException {
         public UserPasswordSameAsOldException(String password) {
             super(ErrorCode.USER_PASSWORD_SAME_AS_OLD, password);
+        }
+    }
+
+    public static class KakaoException extends CommonException {
+        public KakaoException() {
+            super(ErrorCode.PARSING_ERROR);
         }
     }
 }

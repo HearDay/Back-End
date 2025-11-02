@@ -1,19 +1,22 @@
 package HearDay.spring.domain.user.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
-import HearDay.spring.domain.user.dto.request.UserEmailRequestDto;
-import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
-import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
-import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.common.enums.CategoryEnum;
+import HearDay.spring.domain.user.dto.request.*;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
+import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
+import HearDay.spring.global.annotation.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,5 +74,26 @@ public class UserController {
         UserLoginResponseDto result = userCommandService.loginUser(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
+    }
+
+    @GetMapping("/login/kakao")
+    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 API입니다.")
+    public ResponseEntity<CommonApiResponse<UserLoginResponseDto>> loginKakao(
+            @RequestParam String code, HttpServletResponse httpServletResponse
+    ) {
+        UserLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
+    }
+
+    @PostMapping("/category")
+    @Operation(summary = "사용자 선호 카테고리 등록 API", description = "회원가입 시 사용하는 카테고리 등록 API입니다.")
+    public ResponseEntity<CommonApiResponse<Void>> registerCategory(
+            @RequestBody List<CategoryEnum> request,
+            @AuthUser User user
+    ) {
+        userCommandService.registerCategories(request, user);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("카테고리 등록에 성공했습니다.", null));
     }
 }

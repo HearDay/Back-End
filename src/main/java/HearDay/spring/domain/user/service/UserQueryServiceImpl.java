@@ -14,9 +14,9 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     @Override
     public void checkId(String userLoginId) {
-        if (userRepository.findByLoginId(userLoginId).isPresent()) {
-            throw new UserException.UserLoginIdAlreadyExistException(userLoginId);
-        }
+//        if (userRepository.findByLoginId(userLoginId).isPresent()) {
+//            throw new UserException.UserLoginIdAlreadyExistException(userLoginId);
+//        }
     }
 
     @Override

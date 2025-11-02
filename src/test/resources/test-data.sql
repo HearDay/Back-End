@@ -47,7 +47,7 @@ INSERT INTO article (origin_link, publish_date, title, description, image_url, a
                                                                                                                                                 ('https://news.example.com/20', '2025-10-04 18:00:00', '2025년 IT 트렌드 전망', '내년 IT 산업 전망과 기술 트렌드', 'https://example.com/image20.jpg', 'IT', 20, NOW(), NOW());
 
 -- User 더미 데이터 (3명)
-INSERT INTO users (login_id, password, email, phone, level, created_at, updated_at) VALUES
+INSERT INTO users (nickname, password, email, phone, level, created_at, updated_at) VALUES
                                                                                          ('testuser1', 'password123', 'test1@example.com', '010-1234-5678', 1, NOW(), NOW()),
                                                                                          ('testuser2', 'password123', 'test2@example.com', '010-2345-6789', 2, NOW(), NOW()),
                                                                                          ('testuser3', 'password123', 'test3@example.com', '010-3456-7890', 3, NOW(), NOW());
