@@ -19,3 +19,8 @@ dictionary:
 jwt:
   secret:
     key: testsecretkeyforjwttestsecretkeyforjwttestsecretkeyforjwttestsecretkeyforjwt
+
+kakao:
+  auth:
+    client: test-kakao-client-id
+    redirect: test-kakao-redirect-url
