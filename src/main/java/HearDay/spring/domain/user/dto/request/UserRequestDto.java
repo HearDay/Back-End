@@ -16,8 +16,5 @@ public record UserRequestDto(
 
         @NotBlank(message = "전화번호는 필수입니다.")
         @Pattern(regexp = "^\\d{10,11}$", message = "전화번호 형식이 올바르지 않습니다.")
-        String phone,
-
-        @NotEmpty(message = "선호도 입력은 필수입니다.")
-        List<CategoryEnum> userCategory
+        String phone
 ) {}

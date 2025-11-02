@@ -43,7 +43,7 @@ public class KakaoUtil {
             return token;
         } catch (JsonProcessingException e) {
             log.error("Token parsing error", e);
-            throw new UserException.KakoException();
+            throw new UserException.KakaoException();
         }
     }
 
@@ -60,7 +60,7 @@ public class KakaoUtil {
             return objectMapper.readValue(response, KakaoRequestDto.class);
         } catch (JsonProcessingException e) {
             log.error("Profile parsing error", e);
-            throw new UserException.KakoException();
+            throw new UserException.KakaoException();
         }
     }
 }

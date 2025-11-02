@@ -40,7 +40,6 @@ public class User extends BaseEntity {
             name = "user_category", // 별도 테이블 생성
             joinColumns = @JoinColumn(name = "user_id") // User 엔티티와 매핑
             )
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private List<CategoryEnum> userCategory;
 

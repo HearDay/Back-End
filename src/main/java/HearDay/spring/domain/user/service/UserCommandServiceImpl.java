@@ -1,5 +1,6 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.KakaoRequestDto;
 import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
 import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
@@ -19,6 +20,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +47,6 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .email(request.email())
                 .phone(request.phone())
                 .level(1)
-                .userCategory(request.userCategory())
                 .build();
 
         userRepository.save(user);
@@ -120,5 +123,14 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .userCategory(null)
                 .build();
         return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void registerCategories(List<CategoryEnum> request, User user) {
+        User persistedUser = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new UserException.UserNotFoundException(user.getEmail()));
+
+        persistedUser.getUserCategory().addAll(request);
     }
 }
