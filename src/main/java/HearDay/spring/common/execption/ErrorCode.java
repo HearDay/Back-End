@@ -32,7 +32,10 @@ public enum ErrorCode {
 
     // UserWordBookmark 도메인
     WORD_BOOKMARK_NOT_EXISTS(400, "UW001", "북마크가 존재하지 않습니다."),
-    WORD_ALREADY_BOOKMARKED_TODAY(400, "UW002", "오늘 이미 같은 단어를 저장했습니다.");
+    WORD_ALREADY_BOOKMARKED_TODAY(400, "UW002", "오늘 이미 같은 단어를 저장했습니다."),
+
+    // Discussion 도메인
+    DISCUSSION_NOT_EXISTS(200, "D001", "토론이 존재하지 않습니다.");
 
     private final int status;
     private final String code;
