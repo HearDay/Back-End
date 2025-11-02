@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,16 +26,21 @@ public class UserRecentArticleService {
     private final UserRecentArticleRepository recentArticleRepository;
     private final UserRepository userRepository;
 
-    /**
-     * 최근 본 게시글 목록 조회 (최대 20개, 최신순)
-     */
-    public List<ArticleResponseDto> getRecentArticles(Long userId) {
+    public List<ArticleResponseDto> getRecentArticles(Long userId, String sortBy) {
         List<UserRecentArticle> recentArticles = recentArticleRepository
                 .findOldestByUserId(userId, MAX_RECENT_ARTICLES);
         
-        // 최신순으로 정렬하여 반환
+        // 정렬 기준에 따라 정렬
+        Comparator<UserRecentArticle> comparator;
+        if ("PUBLISH_DATE".equalsIgnoreCase(sortBy)) {
+            comparator = (a, b) -> b.getArticle().getPublishDate()
+                    .compareTo(a.getArticle().getPublishDate());
+        } else {
+            comparator = (a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt());
+        }
+        
         return recentArticles.stream()
-                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .sorted(comparator)
                 .map(recent -> ArticleResponseDto.from(recent.getArticle()))
                 .toList();
     }
