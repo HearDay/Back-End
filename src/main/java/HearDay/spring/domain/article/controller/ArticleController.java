@@ -4,6 +4,8 @@ import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.domain.article.dto.ArticleResponseDto;
 import HearDay.spring.domain.article.dto.ArticleSearchDto;
 import HearDay.spring.domain.article.service.ArticleService;
+import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.global.annotation.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +32,17 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "글 세부정보 조회", description = "특정 글의 세부정보를 조회합니다")
-    public ResponseEntity<CommonApiResponse<ArticleResponseDto>> getArticle(@PathVariable Long id) {
+    @Operation(summary = "글 세부정보 조회", description = "특정 글의 세부정보를 조회합니다. 로그인한 사용자의 경우 최근 본 게시글에 자동 추가됩니다")
+    public ResponseEntity<CommonApiResponse<ArticleResponseDto>> getArticle(
+            @AuthUser User user,  // null 가능 (비로그인 사용자)
+            @PathVariable Long id) {
+        
+        ArticleResponseDto article = articleService.getArticle(
+            user != null ? user.getId() : null, 
+            id
+        );
+        
         return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonApiResponse.success(articleService.getArticle(id)));
+                .body(CommonApiResponse.success(article));
     }
 }
