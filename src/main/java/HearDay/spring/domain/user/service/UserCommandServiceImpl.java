@@ -33,15 +33,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public UserLoginResponseDto registerUser(UserRequestDto request) {
-        if (userRepository.findByLoginId(request.loginId()).isPresent()) {
-            throw new UserException.UserLoginIdAlreadyExistException(request.loginId());
-        }
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new UserException.UserEmailAlreadyExistException(request.email());
         }
 
         User user = User.builder()
-                .loginId(request.loginId())
+                .nickname(request.nickname())
                 .password(passwordEncoder.encode(request.password()))
                 .email(request.email())
                 .phone(request.phone())
@@ -51,7 +48,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         userRepository.save(user);
 
-        String token = jwtTokenProvider.generateToken(request.loginId());
+        String token = jwtTokenProvider.generateToken(request.email());
 
         return new UserLoginResponseDto(
             token
@@ -63,11 +60,11 @@ public class UserCommandServiceImpl implements UserCommandService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserException.UserNotFoundException(email));
 
-        mailService.sendMail(
-                email,
-                "[HEARDAY] 아이디 찾기 안내",
-                "회원님의 아이디는: " + user.getLoginId() + " 입니다."
-        );
+//        mailService.sendMail(
+//                email,
+//                "[HEARDAY] 아이디 찾기 안내",
+//                "회원님의 아이디는: " + user.getLoginId() + " 입니다."
+//        );
     }
 
     @Override
@@ -86,10 +83,10 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public UserLoginResponseDto loginUser(UserLoginRequestDto request) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.LoginId(), request.password());
+                new UsernamePasswordAuthenticationToken(request.email(), request.password());
 
         authenticationManager.authenticate(authenticationToken);
-        String token = jwtTokenProvider.generateToken(request.LoginId());
+        String token = jwtTokenProvider.generateToken(request.email());
 
         return new UserLoginResponseDto(
                 token
@@ -115,7 +112,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     private User createNewUser(KakaoRequestDto kakaoProfile) {
         User user = User.builder()
-                .loginId(kakaoProfile.kakao_account().profile().nickname())
+                .nickname(kakaoProfile.kakao_account().profile().nickname())
                 .password(null)
                 .email(kakaoProfile.kakao_account().email())
                 .phone(null)
