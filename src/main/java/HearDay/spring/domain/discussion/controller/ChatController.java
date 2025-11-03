@@ -1,6 +1,6 @@
 package HearDay.spring.domain.discussion.controller;
 
-import HearDay.spring.domain.discussion.dto.ChatResponseDto;
+import HearDay.spring.domain.discussion.dto.response.ChatResponseDto;
 import HearDay.spring.domain.discussion.service.ChatCommandService;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.global.annotation.AuthUser;

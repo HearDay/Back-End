@@ -1,4 +1,4 @@
-package HearDay.spring.domain.discussion.dto;
+package HearDay.spring.domain.discussion.dto.request;
 
 import HearDay.spring.common.enums.DiscussionRoleEnum;
 
