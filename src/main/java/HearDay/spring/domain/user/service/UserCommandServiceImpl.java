@@ -97,7 +97,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+    public String loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
         KakaoResponseDto oAuthtoken = kakaoUtil.requestToken(code);
         KakaoRequestDto kakaoProfile = kakaoUtil.requestProfile(oAuthtoken);
         String email = kakaoProfile.kakao_account().email();
@@ -106,11 +106,8 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseGet(() -> createNewUser(kakaoProfile));
 
         String token = jwtTokenProvider.generateToken(user.getEmail());
-        httpServletResponse.addHeader("Authorization", "Bearer " + token);
 
-        return new UserLoginResponseDto(
-                token
-        );
+        return token;
     }
 
     private User createNewUser(KakaoRequestDto kakaoProfile) {

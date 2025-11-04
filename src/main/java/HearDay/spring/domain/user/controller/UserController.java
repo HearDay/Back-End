@@ -12,10 +12,12 @@ import HearDay.spring.global.annotation.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -76,14 +78,18 @@ public class UserController {
                 .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
     }
 
+    @Value("${backend.url")
+    private String backendUrl;
+
     @GetMapping("/login/kakao")
     @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 API입니다.")
-    public ResponseEntity<CommonApiResponse<UserLoginResponseDto>> loginKakao(
+    public void loginKakao(
             @RequestParam String code, HttpServletResponse httpServletResponse
-    ) {
-        UserLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
+    ) throws IOException {
+        String result = userCommandService.loginKakaoUser(code, httpServletResponse);
+        String redirectUrl = backendUrl + "/login/success?accessToken=" + result;
+
+        httpServletResponse.sendRedirect(redirectUrl);
     }
 
     @PostMapping("/category")
