@@ -1,6 +1,7 @@
 package HearDay.spring.domain.discussion.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
+import HearDay.spring.domain.discussion.dto.response.DiscussionContentDto;
 import HearDay.spring.domain.discussion.dto.response.DiscussionListDto;
 import HearDay.spring.domain.discussion.service.DiscussionQueryService;
 import HearDay.spring.domain.user.entity.User;
@@ -31,12 +32,23 @@ public class DiscussionController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "desc") String sort
-            ) {
+    ) {
         Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
 
         DiscussionListDto result = discussionQueryService.getUserDiscussions(user, pageable);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("조회에 성공했습니다.", result));
+    }
+
+    @GetMapping("/{discussionId}")
+    @Operation(summary = "토론 기록 상세 조회 API")
+    public ResponseEntity<CommonApiResponse<DiscussionContentDto>> getDiscussionContent(
+            @AuthUser User user,
+            @RequestParam Long discussionId
+    ) {
+        DiscussionContentDto result = discussionQueryService.getDiscussionContent(user, discussionId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("조회에 성공했습니다.", result));
     }

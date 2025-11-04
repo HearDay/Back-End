@@ -1,7 +1,10 @@
 package HearDay.spring.domain.discussion.service;
 
+import HearDay.spring.domain.discussion.dto.response.DiscussionContentDto;
 import HearDay.spring.domain.discussion.dto.response.DiscussionListDto;
 import HearDay.spring.domain.discussion.entity.Discussion;
+import HearDay.spring.domain.discussion.entity.DiscussionContent;
+import HearDay.spring.domain.discussion.repository.DiscussionContentRepository;
 import HearDay.spring.domain.discussion.repository.DiscussionRepository;
 import HearDay.spring.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DiscussionQueryServiceImpl implements DiscussionQueryService {
     private final DiscussionRepository discussionRepository;
+    private final DiscussionContentRepository discussionContentRepository;
 
     @Override
     public DiscussionListDto getUserDiscussions(User user, Pageable pageable) {
@@ -29,5 +33,20 @@ public class DiscussionQueryServiceImpl implements DiscussionQueryService {
                 .toList();
 
         return new DiscussionListDto(discussionDtos);
+    }
+
+    @Override
+    public DiscussionContentDto getDiscussionContent(User user, Long discussionId) {
+        List<DiscussionContent> contents = discussionContentRepository.findByDiscussionIdOrderByCreatedAtDesc(discussionId);
+
+        List<DiscussionContentDto.Content> contentDtos = contents.stream()
+                .map(c -> new DiscussionContentDto.Content(
+                        c.getId(),
+                        c.getRole(),
+                        c.getContent()
+                ))
+                .toList();
+
+        return new DiscussionContentDto(contentDtos);
     }
 }

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface DiscussionContentRepository extends JpaRepository<DiscussionContent, Long> {
     List<DiscussionContent> findByDiscussionIdOrderByIdAsc(Long discussionId);
+    List<DiscussionContent> findByDiscussionIdOrderByCreatedAtDesc(Long discussionId);
 }
