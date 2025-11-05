@@ -46,9 +46,16 @@ public class DiscussionController {
     @Operation(summary = "토론 기록 상세 조회 API")
     public ResponseEntity<CommonApiResponse<DiscussionContentDto>> getDiscussionContent(
             @AuthUser User user,
-            @RequestParam Long discussionId
+            @RequestParam Long discussionId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "desc") String sort
     ) {
-        DiscussionContentDto result = discussionQueryService.getDiscussionContent(user, discussionId);
+        Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+
+        DiscussionContentDto result = discussionQueryService.getDiscussionContent(user, discussionId, pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("조회에 성공했습니다.", result));
     }

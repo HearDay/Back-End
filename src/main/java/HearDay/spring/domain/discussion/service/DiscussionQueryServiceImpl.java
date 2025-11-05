@@ -36,8 +36,8 @@ public class DiscussionQueryServiceImpl implements DiscussionQueryService {
     }
 
     @Override
-    public DiscussionContentDto getDiscussionContent(User user, Long discussionId) {
-        List<DiscussionContent> contents = discussionContentRepository.findByDiscussionIdOrderByCreatedAtDesc(discussionId);
+    public DiscussionContentDto getDiscussionContent(User user, Long discussionId, Pageable pageable) {
+        List<DiscussionContent> contents = discussionContentRepository.findByDiscussionId(discussionId, pageable);
 
         List<DiscussionContentDto.Content> contentDtos = contents.stream()
                 .map(c -> new DiscussionContentDto.Content(

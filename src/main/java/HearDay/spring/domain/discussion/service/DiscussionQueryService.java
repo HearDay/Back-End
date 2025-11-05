@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface DiscussionQueryService {
     DiscussionListDto getUserDiscussions(User user, Pageable pageable);
-    DiscussionContentDto getDiscussionContent(User user, Long discussionId);
+    DiscussionContentDto getDiscussionContent(User user, Long discussionId, Pageable pageable);
 }
