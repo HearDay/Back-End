@@ -21,6 +21,9 @@ public class ArticleDetail extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String ttsUrl;
 
+    @Column(columnDefinition = "TEXT")
+    private String ttsAlignment;
+
     @OneToOne(mappedBy = "articleDetail", fetch = FetchType.LAZY)
     private Article article;
 }
