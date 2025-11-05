@@ -11,7 +11,7 @@ public record ArticleResponseDto(
         @Schema(description = "게시글 ID", example = "1") Long id,
         @Schema(description = "게시글 제목", example = "[Q&AI] 코레일 추석 예매 사이트 먹통...해결책은?") String title,
         @Schema(description = "게시글 요약", example = "사람 예능 영차 공급 부족 전자미 아예 추석 거치 예매 당황이 유난히 차질해졌습니다.")
-                String description,
+        String description,
         @Schema(description = "상세정보") ArticleResponseDtoDetail detail,
         @Schema(description = "이미지 URL", example = "https://example.com/image.jpg") String imageUrl,
         @Schema(description = "카테고리", example = "IT") String category,
@@ -19,11 +19,14 @@ public record ArticleResponseDto(
 
     public record ArticleResponseDtoDetail(
             @Schema(
-                            description = "게시글 본문",
-                            example = "사람 예능 영차 공급 부족 전자미 아예 추석 거치 예매 당황이 유난히 차질해졌습니다.")
-                    String content,
+                    description = "게시글 본문",
+                    example = "사람 예능 영차 공급 부족 전자미 아예 추석 거치 예매 당황이 유난히 차질해졌습니다.")
+            String content,
             @Schema(description = "ttsUrl", example = "https://example.com/tts.mp3")
-                    String ttsUrl) {}
+            String ttsUrl,
+            @Schema(description = "ttsAlignment", example = "[ {\"word\": \"안녕하세요\", \"startTime\": 0.0}, {\"word\": \"오늘\", \"startTime\": 0.5}, {\"word\": \"뉴스를\", \"startTime\": 0.8}, {\"word\": \"전해드립니다\", \"startTime\": 1.2} ]")
+            String ttsAlignment
+    ) {}
 
     public static ArticleResponseDto from(Article article) {
         ArticleResponseDtoDetail detail = null;
@@ -44,7 +47,9 @@ public record ArticleResponseDto(
             detail =
                     new ArticleResponseDtoDetail(
                             article.getArticleDetail().getContent(),
-                            article.getArticleDetail().getTtsUrl());
+                            article.getArticleDetail().getTtsUrl(),
+                            article.getArticleDetail().getTtsAlignment()
+                    );
         }
 
         return new ArticleResponseDto(
