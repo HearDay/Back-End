@@ -29,5 +29,5 @@ public class Discussion extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DisscussionContent> disscussionContentList = new ArrayList<>();
+    private List<DiscussionContent> disscussionContentList = new ArrayList<>();
 }
