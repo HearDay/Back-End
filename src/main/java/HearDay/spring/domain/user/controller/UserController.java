@@ -3,6 +3,7 @@ package HearDay.spring.domain.user.controller;
 import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.*;
+import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
@@ -101,5 +102,16 @@ public class UserController {
         userCommandService.registerCategories(request, user);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("카테고리 등록에 성공했습니다.", null));
+    }
+
+    @GetMapping("/home")
+    @Operation(summary = "홈화면에서 유저 정보 조회 API", description = "홈화면에서 유저 정보를 불러오는 API입니다.")
+    public ResponseEntity<CommonApiResponse<HomeResponseDto>> getInformation(
+            @AuthUser User user
+    ) {
+        HomeResponseDto result = userQueryService.getHomeInformation(user);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(result));
     }
 }
