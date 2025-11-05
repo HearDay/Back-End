@@ -2,6 +2,7 @@ package HearDay.spring.domain.article.entity;
 
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
+import HearDay.spring.domain.articlerecommend.entity.ArticleRecommend;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,4 +41,8 @@ public class Article extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "article_detail_id")
     private ArticleDetail articleDetail;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "article_recommend_id")
+    private ArticleRecommend articleRecommend;
 }
