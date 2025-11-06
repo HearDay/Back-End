@@ -46,7 +46,7 @@ public class UserArticleBookmarkService {
         articleBookmarkRepository.save(bookmark);
     }
 
-    public void removeBookmark(Long articleId, Long userId) {
+    public void removeBookmark(Long userId, Long articleId) {
         UserArticleBookmark bookmark =
                 articleBookmarkRepository
                         .findByUserIdAndArticleId(userId, articleId)
