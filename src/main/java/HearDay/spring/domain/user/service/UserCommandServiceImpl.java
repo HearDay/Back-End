@@ -34,6 +34,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final KakaoUtil kakaoUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public UserLoginResponseDto registerUser(UserRequestDto request) {
@@ -129,5 +130,17 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseThrow(() -> new UserException.UserNotFoundException(user.getEmail()));
 
         persistedUser.getUserCategory().addAll(request);
+    }
+
+    @Override
+    public String refreshAccessToken(String refreshToken) {
+        String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
+        String savedRefreshToken = refreshTokenService.getRefreshToken(Long.valueOf(userEmail));
+
+        if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+            throw new UserException.RefreshTokenException();
+        }
+
+        return jwtTokenProvider.generateToken(userEmail);
     }
 }

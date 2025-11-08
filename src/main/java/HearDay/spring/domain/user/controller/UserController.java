@@ -7,6 +7,7 @@ import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.user.service.RefreshTokenService;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import HearDay.spring.global.annotation.AuthUser;
@@ -28,6 +29,7 @@ public class UserController {
 
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping
     @Operation(summary = "회원가입 API", description = "회원가입시 사용하는 API입니다.")
@@ -110,6 +112,17 @@ public class UserController {
             @AuthUser User user
     ) {
         HomeResponseDto result = userQueryService.getHomeInformation(user);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(result));
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "리프래시 토큰 재발급 API")
+    public ResponseEntity<CommonApiResponse<?>> reissueToken(
+            @RequestBody String refreshToken
+    ) {
+        String result = userCommandService.refreshAccessToken(refreshToken);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(result));

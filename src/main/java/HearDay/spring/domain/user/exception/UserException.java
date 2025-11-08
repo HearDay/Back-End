@@ -35,4 +35,10 @@ public class UserException {
             super(ErrorCode.PARSING_ERROR);
         }
     }
+
+    public static class RefreshTokenException extends CommonException {
+        public RefreshTokenException() {
+            super(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+    }
 }

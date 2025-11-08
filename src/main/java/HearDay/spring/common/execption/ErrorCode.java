@@ -25,6 +25,7 @@ public enum ErrorCode {
 
     // JWT
     INVALID_TOKEN(404, "J001", "d"),
+    INVALID_REFRESH_TOKEN(404, "J002", "d"),
 
     // UserArticleBookmark 도메인
     ARTICLE_BOOKMARK_ALREADY(400, "UA001", "이미 북마크한 게시글입니다."),
