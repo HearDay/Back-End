@@ -148,6 +148,16 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public String refreshAccessToken(String refreshToken) {
+        // 서명 검증
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new UserException.RefreshTokenException();
+        }
+
+        // 만료 여부 확인
+        if (jwtTokenProvider.isExpired(refreshToken)) {
+            throw new UserException.RefreshTokenException();
+        }
+
         String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
         String savedRefreshToken = refreshTokenService.getRefreshToken(userEmail);
 

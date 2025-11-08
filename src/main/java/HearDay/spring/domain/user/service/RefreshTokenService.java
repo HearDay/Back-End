@@ -20,7 +20,7 @@ public class RefreshTokenService {
         return redisService.getData("refresh:" + email);
     }
 
-    public void deleteRefreshToken(Long userId) {
-        redisService.deleteData("refresh:" + userId);
+    public void deleteRefreshToken(String email) {
+        redisService.deleteData("refresh:" + email);
     }
 }
