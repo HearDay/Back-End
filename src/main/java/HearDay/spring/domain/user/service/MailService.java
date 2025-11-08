@@ -1,8 +1,8 @@
 package HearDay.spring.domain.user.service;
 
 import HearDay.spring.domain.user.exception.UserException;
+import HearDay.spring.global.redis.RedisService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,7 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 public class MailService {
 
     private final JavaMailSender mailSender;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisService redisService;
 
     public void sendMail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -24,7 +24,7 @@ public class MailService {
     }
 
     public boolean verifyCode(String email, String code) {
-        String savedCode = redisTemplate.opsForValue().get("EMAIL_CODE:" + email);
+        String savedCode = redisService.getData("EMAIL_CODE:" + email);
         if (savedCode == null) {
             throw new UserException.EmailCodeExpiredException(email);
         }

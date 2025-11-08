@@ -7,16 +7,14 @@ import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
 import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
-import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
 import HearDay.spring.global.jwt.JwtTokenProvider;
+import HearDay.spring.global.redis.RedisService;
 import HearDay.spring.global.util.KakaoUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.mail.MailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,8 +35,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final AuthenticationManager authenticationManager;
     private final KakaoUtil kakaoUtil;
     private final RefreshTokenService refreshTokenService;
-    private static final long EXPIRE_MINUTES = 5;
-    private final RedisTemplate<String, String> redisTemplate;
+    private static final long EXPIRE_MINUTES = 1000L * 60 * 5;
+    private final RedisService redisService;
 
     @Override
     public UserLoginResponseDto registerUser(UserRequestDto request) {
@@ -202,7 +200,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     public void sendAuthCode(String email) {
         String code = generateCode();
 
-        redisTemplate.opsForValue().set("EMAIL_CODE:" + email, code, EXPIRE_MINUTES, TimeUnit.MINUTES);
+        redisService.setData("EMAIL_CODE:" + email, code, EXPIRE_MINUTES);
 
                 mailService.sendMail(
                 email,
