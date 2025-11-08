@@ -14,10 +14,13 @@ public class RefreshTokenService {
 
     public void saveRefreshToken(String email, String token) {
         redisService.setData("refresh:" + email, token, REFRESH_TOKEN_EXPIRE);
+        System.out.println("Refresh Token 저장: " + token);
     }
 
     public String getRefreshToken(String email) {
-        return redisService.getData("refresh:" + email);
+        String token =  redisService.getData("refresh:" + email);
+        System.out.println("Redis에서 읽은 Refresh Token: " + token);
+        return token;
     }
 
     public void deleteRefreshToken(String email) {

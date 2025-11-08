@@ -55,6 +55,9 @@ public class UserCommandServiceImpl implements UserCommandService {
         String accessToken = jwtTokenProvider.generateToken(request.email());
         String refreshToken = jwtTokenProvider.createRefreshToken(request.email());
 
+        System.out.println("Access Token: " + accessToken);
+        System.out.println("Refresh Token: " + refreshToken);
+
         refreshTokenService.saveRefreshToken(request.email(), refreshToken);
 
         return new UserLoginResponseDto(
@@ -148,23 +151,46 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public String refreshAccessToken(String refreshToken) {
-        // 서명 검증
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new UserException.RefreshTokenException();
-        }
+//        // 서명 검증
+//        if (!jwtTokenProvider.validateToken(refreshToken)) {
+//            throw new RuntimeException("유효하지 않은 Refresh Token");
+//        }
 
         // 만료 여부 확인
         if (jwtTokenProvider.isExpired(refreshToken)) {
-            throw new UserException.RefreshTokenException();
+            throw new RuntimeException("만료된 Refresh Token");
         }
 
         String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
         String savedRefreshToken = refreshTokenService.getRefreshToken(userEmail);
 
+        // Redis와 비교
         if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
-            throw new UserException.RefreshTokenException();
+            throw new RuntimeException("Refresh Token 불일치");
         }
 
-        return jwtTokenProvider.generateToken(userEmail);
+        String newAccessToken = jwtTokenProvider.generateToken(userEmail);
+        System.out.println("새로 발급된 Access Token: " + newAccessToken);
+        return newAccessToken;
     }
+//    public String refreshAccessToken(String refreshToken) {
+//        // 서명 검증
+//        if (!jwtTokenProvider.validateToken(refreshToken)) {
+//            throw new UserException.RefreshTokenException();
+//        }
+//
+//        // 만료 여부 확인
+//        if (jwtTokenProvider.isExpired(refreshToken)) {
+//            throw new UserException.RefreshTokenException();
+//        }
+//
+//        String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
+//        String savedRefreshToken = refreshTokenService.getRefreshToken(userEmail);
+//
+//        if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+//            throw new UserException.RefreshTokenException();
+//        }
+//
+//        return jwtTokenProvider.generateToken(userEmail);
+//    }
 }

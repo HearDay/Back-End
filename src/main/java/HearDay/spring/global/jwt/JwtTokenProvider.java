@@ -39,7 +39,7 @@ public class JwtTokenProvider {
         Date expiry = new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION);
 
         return Jwts.builder()
-                .setSubject(String.valueOf(userEmail))
+                .setSubject(userEmail)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -63,6 +63,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            System.out.println("JWT 검증 실패");
             return false;
         }
     }
