@@ -35,4 +35,22 @@ public class UserException {
             super(ErrorCode.PARSING_ERROR);
         }
     }
+
+    public static class RefreshTokenException extends CommonException {
+        public RefreshTokenException() {
+            super(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+    }
+
+    public static class EmailCodeExpiredException extends CommonException {
+        public EmailCodeExpiredException(String email) {
+            super(ErrorCode.USER_EMAIL_ERROR, "인증 코드가 만료되었습니다: " + email);
+        }
+    }
+
+    public static class EmailCodeMismatchException extends CommonException {
+        public EmailCodeMismatchException(String email) {
+            super(ErrorCode.USER_EMAIL_ERROR, "인증 코드가 일치하지 않습니다: " + email);
+        }
+    }
 }

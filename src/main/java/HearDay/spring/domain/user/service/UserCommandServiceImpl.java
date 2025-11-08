@@ -7,15 +7,14 @@ import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
 import HearDay.spring.domain.user.dto.request.UserRequestDto;
 import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
-import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
 import HearDay.spring.global.jwt.JwtTokenProvider;
+import HearDay.spring.global.redis.RedisService;
 import HearDay.spring.global.util.KakaoUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.MailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +34,9 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final KakaoUtil kakaoUtil;
+    private final RefreshTokenService refreshTokenService;
+    private static final long EXPIRE_MINUTES = 1000L * 60 * 5;
+    private final RedisService redisService;
 
     @Override
     public UserLoginResponseDto registerUser(UserRequestDto request) {
@@ -51,10 +54,17 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         userRepository.save(user);
 
-        String token = jwtTokenProvider.generateToken(request.email());
+        String accessToken = jwtTokenProvider.generateToken(request.email());
+        String refreshToken = jwtTokenProvider.createRefreshToken(request.email());
+
+        System.out.println("Access Token: " + accessToken);
+        System.out.println("Refresh Token: " + refreshToken);
+
+        refreshTokenService.saveRefreshToken(request.email(), refreshToken);
 
         return new UserLoginResponseDto(
-            token
+                accessToken,
+                refreshToken
         );
     }
 
@@ -89,15 +99,19 @@ public class UserCommandServiceImpl implements UserCommandService {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password());
 
         authenticationManager.authenticate(authenticationToken);
-        String token = jwtTokenProvider.generateToken(request.email());
+        String accessToken = jwtTokenProvider.generateToken(request.email());
+        String refreshToken = jwtTokenProvider.createRefreshToken(request.email());
+
+        refreshTokenService.saveRefreshToken(request.email(), refreshToken);
 
         return new UserLoginResponseDto(
-                token
+                accessToken,
+                refreshToken
         );
     }
 
     @Override
-    public String loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+    public UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
         KakaoResponseDto oAuthtoken = kakaoUtil.requestToken(code);
         KakaoRequestDto kakaoProfile = kakaoUtil.requestProfile(oAuthtoken);
         String email = kakaoProfile.kakao_account().email();
@@ -105,9 +119,15 @@ public class UserCommandServiceImpl implements UserCommandService {
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> createNewUser(kakaoProfile));
 
-        String token = jwtTokenProvider.generateToken(user.getEmail());
+        String accessToken = jwtTokenProvider.generateToken(user.getEmail());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
 
-        return token;
+        refreshTokenService.saveRefreshToken(user.getEmail(), refreshToken);
+
+        return new UserLoginResponseDto(
+                accessToken,
+                refreshToken
+        );
     }
 
     private User createNewUser(KakaoRequestDto kakaoProfile) {
@@ -129,5 +149,67 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .orElseThrow(() -> new UserException.UserNotFoundException(user.getEmail()));
 
         persistedUser.getUserCategory().addAll(request);
+    }
+
+    @Override
+    public String refreshAccessToken(String refreshToken) {
+//        // 서명 검증
+//        if (!jwtTokenProvider.validateToken(refreshToken)) {
+//            throw new RuntimeException("유효하지 않은 Refresh Token");
+//        }
+
+        // 만료 여부 확인
+        if (jwtTokenProvider.isExpired(refreshToken)) {
+            throw new RuntimeException("만료된 Refresh Token");
+        }
+
+        String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
+        String savedRefreshToken = refreshTokenService.getRefreshToken(userEmail);
+
+        // Redis와 비교
+        if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+            throw new RuntimeException("Refresh Token 불일치");
+        }
+
+        String newAccessToken = jwtTokenProvider.generateToken(userEmail);
+        System.out.println("새로 발급된 Access Token: " + newAccessToken);
+        return newAccessToken;
+    }
+//    public String refreshAccessToken(String refreshToken) {
+//        // 서명 검증
+//        if (!jwtTokenProvider.validateToken(refreshToken)) {
+//            throw new UserException.RefreshTokenException();
+//        }
+//
+//        // 만료 여부 확인
+//        if (jwtTokenProvider.isExpired(refreshToken)) {
+//            throw new UserException.RefreshTokenException();
+//        }
+//
+//        String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
+//        String savedRefreshToken = refreshTokenService.getRefreshToken(userEmail);
+//
+//        if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+//            throw new UserException.RefreshTokenException();
+//        }
+//
+//        return jwtTokenProvider.generateToken(userEmail);
+//    }
+
+    @Override
+    public void sendAuthCode(String email) {
+        String code = generateCode();
+
+        redisService.setData("EMAIL_CODE:" + email, code, EXPIRE_MINUTES);
+
+                mailService.sendMail(
+                email,
+                "[HEARDAY] 이메일 인증 코드",
+                "인증 코드는 " + code + " 입니다. (유효시간 5분)"
+        );
+    }
+
+    private String generateCode() {
+        return String.valueOf((int)(Math.random() * 900000) + 100000); // 6자리 숫자
     }
 }

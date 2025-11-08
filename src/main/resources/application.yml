@@ -26,6 +26,10 @@ spring:
           auth: true
           starttls:
             enable: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
 dictionary:
   api:
     key: ${DIC_API_KEY}

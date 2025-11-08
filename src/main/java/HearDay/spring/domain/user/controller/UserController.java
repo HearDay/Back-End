@@ -7,6 +7,8 @@ import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.user.service.MailService;
+import HearDay.spring.domain.user.service.RefreshTokenService;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
 import HearDay.spring.global.annotation.AuthUser;
@@ -28,6 +30,8 @@ public class UserController {
 
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
+    private final RefreshTokenService refreshTokenService;
+    private final MailService mailService;
 
     @PostMapping
     @Operation(summary = "회원가입 API", description = "회원가입시 사용하는 API입니다.")
@@ -87,7 +91,7 @@ public class UserController {
     public void loginKakao(
             @RequestParam String code, HttpServletResponse httpServletResponse
     ) throws IOException {
-        String result = userCommandService.loginKakaoUser(code, httpServletResponse);
+        UserLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
         String redirectUrl = backendUrl + "/login/success?accessToken=" + result;
 
         httpServletResponse.sendRedirect(redirectUrl);
@@ -113,5 +117,37 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(result));
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "리프래시 토큰 재발급 API")
+    public ResponseEntity<CommonApiResponse<?>> reissueToken(
+            @RequestBody String refreshToken
+    ) {
+        String result = userCommandService.refreshAccessToken(refreshToken);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(result));
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<CommonApiResponse<Void>> sendEmail(
+            @RequestBody String email
+    ) {
+        userCommandService.sendAuthCode(email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(null));
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<CommonApiResponse<Void>> verifyEmail(
+            @RequestBody String email,
+            @RequestParam String code
+    ) {
+        boolean result = mailService.verifyCode(email, code);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(null));
     }
 }
