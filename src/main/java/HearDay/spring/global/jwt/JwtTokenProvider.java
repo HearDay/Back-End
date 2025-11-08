@@ -34,12 +34,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken(Long userId) {
+    public String createRefreshToken(String userEmail) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION);
 
         return Jwts.builder()
-                .setSubject(String.valueOf(userId))
+                .setSubject(String.valueOf(userEmail))
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)

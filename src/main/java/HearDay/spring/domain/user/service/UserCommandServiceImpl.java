@@ -52,10 +52,14 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         userRepository.save(user);
 
-        String token = jwtTokenProvider.generateToken(request.email());
+        String accessToken = jwtTokenProvider.generateToken(request.email());
+        String refreshToken = jwtTokenProvider.createRefreshToken(request.email());
+
+        refreshTokenService.saveRefreshToken(request.email(), refreshToken);
 
         return new UserLoginResponseDto(
-            token
+                accessToken,
+                refreshToken
         );
     }
 
@@ -90,15 +94,19 @@ public class UserCommandServiceImpl implements UserCommandService {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password());
 
         authenticationManager.authenticate(authenticationToken);
-        String token = jwtTokenProvider.generateToken(request.email());
+        String accessToken = jwtTokenProvider.generateToken(request.email());
+        String refreshToken = jwtTokenProvider.createRefreshToken(request.email());
+
+        refreshTokenService.saveRefreshToken(request.email(), refreshToken);
 
         return new UserLoginResponseDto(
-                token
+                accessToken,
+                refreshToken
         );
     }
 
     @Override
-    public String loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+    public UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
         KakaoResponseDto oAuthtoken = kakaoUtil.requestToken(code);
         KakaoRequestDto kakaoProfile = kakaoUtil.requestProfile(oAuthtoken);
         String email = kakaoProfile.kakao_account().email();
@@ -106,9 +114,15 @@ public class UserCommandServiceImpl implements UserCommandService {
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> createNewUser(kakaoProfile));
 
-        String token = jwtTokenProvider.generateToken(user.getEmail());
+        String accessToken = jwtTokenProvider.generateToken(user.getEmail());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
 
-        return token;
+        refreshTokenService.saveRefreshToken(user.getEmail(), refreshToken);
+
+        return new UserLoginResponseDto(
+                accessToken,
+                refreshToken
+        );
     }
 
     private User createNewUser(KakaoRequestDto kakaoProfile) {
@@ -135,7 +149,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public String refreshAccessToken(String refreshToken) {
         String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
-        String savedRefreshToken = refreshTokenService.getRefreshToken(Long.valueOf(userEmail));
+        String savedRefreshToken = refreshTokenService.getRefreshToken(userEmail);
 
         if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
             throw new UserException.RefreshTokenException();

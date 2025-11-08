@@ -12,12 +12,12 @@ public class RefreshTokenService {
 
     private static final long REFRESH_TOKEN_EXPIRE = 60 * 60 * 24 * 7; // 7일
 
-    public void saveRefreshToken(Long userId, String token) {
-        redisService.setData("refresh:" + userId, token, REFRESH_TOKEN_EXPIRE);
+    public void saveRefreshToken(String email, String token) {
+        redisService.setData("refresh:" + email, token, REFRESH_TOKEN_EXPIRE);
     }
 
-    public String getRefreshToken(Long userId) {
-        return redisService.getData("refresh:" + userId);
+    public String getRefreshToken(String email) {
+        return redisService.getData("refresh:" + email);
     }
 
     public void deleteRefreshToken(Long userId) {

@@ -17,7 +17,7 @@ public interface UserCommandService {
     void sendUserIdToEmail(String email);
     void changePassword(UserPasswordRequestDto request);
     UserLoginResponseDto loginUser(UserLoginRequestDto request);
-    String loginKakaoUser(String code, HttpServletResponse httpServletResponse);
+    UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse);
     void registerCategories(List<CategoryEnum> request, User user);
     String refreshAccessToken(String refreshToken);
 }
