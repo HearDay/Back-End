@@ -4,7 +4,10 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password:
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -15,6 +18,8 @@ spring:
 dictionary:
   api:
     key: key-for-test
+
+
 
 jwt:
   secret:
