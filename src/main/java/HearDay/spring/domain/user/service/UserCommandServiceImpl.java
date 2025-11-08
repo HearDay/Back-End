@@ -15,6 +15,7 @@ import HearDay.spring.global.jwt.JwtTokenProvider;
 import HearDay.spring.global.util.KakaoUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final AuthenticationManager authenticationManager;
     private final KakaoUtil kakaoUtil;
     private final RefreshTokenService refreshTokenService;
+    private static final long EXPIRE_MINUTES = 5;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     public UserLoginResponseDto registerUser(UserRequestDto request) {
@@ -193,4 +197,21 @@ public class UserCommandServiceImpl implements UserCommandService {
 //
 //        return jwtTokenProvider.generateToken(userEmail);
 //    }
+
+    @Override
+    public void sendAuthCode(String email) {
+        String code = generateCode();
+
+        redisTemplate.opsForValue().set("EMAIL_CODE:" + email, code, EXPIRE_MINUTES, TimeUnit.MINUTES);
+
+                mailService.sendMail(
+                email,
+                "[HEARDAY] 이메일 인증 코드",
+                "인증 코드는 " + code + " 입니다. (유효시간 5분)"
+        );
+    }
+
+    private String generateCode() {
+        return String.valueOf((int)(Math.random() * 900000) + 100000); // 6자리 숫자
+    }
 }

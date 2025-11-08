@@ -22,6 +22,7 @@ public enum ErrorCode {
     USER_EMAIL_EXIST(400, "U003", "이미 가입된 이메일입니다."),
     USER_PASSWORD_SAME_AS_OLD(400, "U004", "새 비밀번호는 이번 비밀번호와 같지 않아야 합니다."),
     PARSING_ERROR(400, "U005", "카카오 로그인 오류"),
+    USER_EMAIL_ERROR(400, "U006", "잘못된 인증입니다."),
 
     // JWT
     INVALID_TOKEN(404, "J001", "d"),

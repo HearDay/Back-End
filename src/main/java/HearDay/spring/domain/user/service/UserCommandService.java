@@ -20,4 +20,5 @@ public interface UserCommandService {
     UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse);
     void registerCategories(List<CategoryEnum> request, User user);
     String refreshAccessToken(String refreshToken);
+    void sendAuthCode(String email);
 }

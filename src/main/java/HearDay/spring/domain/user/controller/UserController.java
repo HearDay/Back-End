@@ -7,6 +7,7 @@ import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.user.service.MailService;
 import HearDay.spring.domain.user.service.RefreshTokenService;
 import HearDay.spring.domain.user.service.UserCommandService;
 import HearDay.spring.domain.user.service.UserQueryService;
@@ -30,6 +31,7 @@ public class UserController {
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
     private final RefreshTokenService refreshTokenService;
+    private final MailService mailService;
 
     @PostMapping
     @Operation(summary = "회원가입 API", description = "회원가입시 사용하는 API입니다.")
@@ -126,5 +128,26 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(result));
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<CommonApiResponse<Void>> sendEmail(
+            @RequestBody String email
+    ) {
+        userCommandService.sendAuthCode(email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(null));
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<CommonApiResponse<Void>> verifyEmail(
+            @RequestBody String email,
+            @RequestParam String code
+    ) {
+        boolean result = mailService.verifyCode(email, code);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(null));
     }
 }
