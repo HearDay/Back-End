@@ -1,5 +1,7 @@
 package HearDay.spring.domain.discussion.service;
 
+import HearDay.spring.common.enums.AiChatLevelEnum;
+import HearDay.spring.common.enums.AiChatModeEnum;
 import HearDay.spring.common.enums.DiscussionRoleEnum;
 import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.article.exception.ArticleException;
@@ -34,7 +36,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         // 첫 메세지면 새 토론 생성
         Discussion discussion;
-        List<AiRequestDto.Message> previousMessages = List.of();
+        AiChatModeEnum mode;
 
         if (discussionId == null) {
             discussion = discussionRepository.save(
@@ -43,16 +45,11 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                             .user(user)
                             .build()
             );
+            mode = AiChatModeEnum.OPEN;
         } else {
             discussion = discussionRepository.findById(discussionId)
                     .orElseThrow(() -> new DiscussionException.DiscussionNotFoundException(discussionId));
-
-            // 이전 메세지 불러오기
-            previousMessages = discussionContentRepository
-                    .findByDiscussionIdOrderByIdAsc(discussion.getId())
-                    .stream()
-                    .map(m -> new AiRequestDto.Message(m.getRole(), m.getContent()))
-                    .toList();
+            mode = AiChatModeEnum.FOLLOWUP;
         }
 
         // 현재 유저 메세지 저장
@@ -66,12 +63,12 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         // AI 요청 DTO
         AiRequestDto aiRequest = new AiRequestDto(
-                discussion.getId(),
-                user.getNickname(),
-                article.getTitle(),
+                user.getId().toString(),
+                discussionId.toString(),
                 article.getDescription(),
-                previousMessages,
-                request
+                request,
+                mode,
+                AiChatLevelEnum.BEGINNER
         );
 
         // AI 서버 호출

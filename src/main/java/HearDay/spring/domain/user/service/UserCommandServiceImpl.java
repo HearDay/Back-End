@@ -153,10 +153,10 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public String refreshAccessToken(String refreshToken) {
-//        // 서명 검증
-//        if (!jwtTokenProvider.validateToken(refreshToken)) {
-//            throw new RuntimeException("유효하지 않은 Refresh Token");
-//        }
+        // 서명 검증
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new RuntimeException("유효하지 않은 Refresh Token");
+        }
 
         // 만료 여부 확인
         if (jwtTokenProvider.isExpired(refreshToken)) {
