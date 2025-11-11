@@ -9,10 +9,13 @@ import HearDay.spring.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserQueryServiceImpl implements UserQueryService {
 
     private final UserRepository userRepository;
@@ -64,24 +68,34 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     private List<HomeResponseDto.ArticleDto> fetchRecommendedArticlesFromAiServer(Long userId) {
-        List<AiArticle> aiArticles = webClient.get()
-                .uri(aiUrl + "/users/{userId}/recommendations", userId)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<AiArticle>>() {})
-                .block();
+        try {
+            List<AiArticle> aiArticles = webClient.get()
+                    .uri(aiUrl + "/users/{userId}/recommendations", userId)
+                    .retrieve()
+                    .onStatus(
+                            HttpStatusCode::is5xxServerError,
+                            clientResponse -> {
+                                log.error("AI 서버 오류 (userId: {}): {}", userId, clientResponse.statusCode());
+                                return Mono.error(new RuntimeException("AI 서버에서 오류가 발생했습니다."));
+                            }
+                    )
+                    .bodyToMono(new ParameterizedTypeReference<List<AiArticle>>() {})
+                    .blockOptional()
+                    .orElse(List.of());
 
-        if (aiArticles == null) {
+            return aiArticles.stream()
+                    .map(a -> new HomeResponseDto.ArticleDto(
+                            a.getId(),
+                            a.getTitle(),
+                            a.getOriginLink(),
+                            a.getImageUrl()
+                    ))
+                    .toList();
+
+        } catch (Exception e) {
+            log.error("AI 서버 통신 중 예외 발생 (userId: {}): {}", userId, e.getMessage());
             return List.of();
         }
-
-        return aiArticles.stream()
-                .map(a -> new HomeResponseDto.ArticleDto(
-                        a.getId(),
-                        a.getTitle(),
-                        a.getOriginLink(),
-                        a.getImageUrl()
-                ))
-                .toList();
     }
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
