@@ -64,15 +64,10 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     private List<HomeResponseDto.ArticleDto> fetchRecommendedArticlesFromAiServer(Long userId) {
-        List<AiNewsResponse.AiArticle> aiArticles = WebClient.builder()
-                .baseUrl(aiUrl)
-                .build()
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/users/{userId}/recommendations")
-                        .build(userId))
+        List<AiArticle> aiArticles = webClient.get()
+                .uri(aiUrl + "/users/{userId}/recommendations", userId)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<AiNewsResponse.AiArticle>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<AiArticle>>() {})
                 .block();
 
         if (aiArticles == null) {
@@ -89,35 +84,27 @@ public class UserQueryServiceImpl implements UserQueryService {
                 .toList();
     }
 
-    private static class AiNewsResponse {
-        private List<AiArticle> articles;
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    private static class AiArticle {
+        private Long id;
+        private String title;
+        private String originLink;
+        private String imageUrl;
 
-        public List<AiArticle> getArticles() {
-            return articles;
+        public Long getId() {
+            return id;
         }
 
-        @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-        public static class AiArticle {
-            private Long id;
-            private String title;
-            private String originLink;
-            private String imageUrl;
+        public String getTitle() {
+            return title;
+        }
 
-            public Long getId() {
-                return id;
-            }
+        public String getOriginLink() {
+            return originLink;
+        }
 
-            public String getTitle() {
-                return title;
-            }
-
-            public String getOriginLink() {
-                return originLink;
-            }
-
-            public String getImageUrl() {
-                return imageUrl;
-            }
+        public String getImageUrl() {
+            return imageUrl;
         }
     }
 }
