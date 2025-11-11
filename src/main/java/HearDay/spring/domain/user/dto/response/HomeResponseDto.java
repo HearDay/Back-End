@@ -13,7 +13,7 @@ public record HomeResponseDto(
     public record ArticleDto(
             Long id,
             String title,
-            @JsonProperty("origin_link") String origin_link,
-            @JsonProperty("image_url") String imageUrl
+            @JsonProperty("originLink") String origin_link,
+            @JsonProperty("imageUrl") String image_url
     ) {}
 }

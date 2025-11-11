@@ -6,8 +6,11 @@ import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -61,7 +64,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     private List<HomeResponseDto.ArticleDto> fetchRecommendedArticlesFromAiServer(Long userId) {
-        AiNewsResponse aiResponse = WebClient.builder()
+        List<AiNewsResponse.AiArticle> aiArticles = WebClient.builder()
                 .baseUrl(aiUrl)
                 .build()
                 .get()
@@ -69,14 +72,14 @@ public class UserQueryServiceImpl implements UserQueryService {
                         .path("/users/{userId}/recommendations")
                         .build(userId))
                 .retrieve()
-                .bodyToMono(AiNewsResponse.class)
+                .bodyToMono(new ParameterizedTypeReference<List<AiNewsResponse.AiArticle>>() {})
                 .block();
 
-        if (aiResponse == null) {
+        if (aiArticles == null) {
             return List.of();
         }
 
-        return aiResponse.getArticles().stream()
+        return aiArticles.stream()
                 .map(a -> new HomeResponseDto.ArticleDto(
                         a.getId(),
                         a.getTitle(),
@@ -93,6 +96,7 @@ public class UserQueryServiceImpl implements UserQueryService {
             return articles;
         }
 
+        @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
         public static class AiArticle {
             private Long id;
             private String title;
