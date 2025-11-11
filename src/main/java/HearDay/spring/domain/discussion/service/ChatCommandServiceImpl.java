@@ -15,6 +15,7 @@ import HearDay.spring.domain.discussion.repository.DiscussionContentRepository;
 import HearDay.spring.domain.discussion.repository.DiscussionRepository;
 import HearDay.spring.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -28,6 +29,9 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final ArticleRepository articleRepository;
     private final DiscussionContentRepository discussionContentRepository;
     private final DiscussionRepository discussionRepository;
+
+    @Value("${ai.api.url}")
+    private String aiUrl;
 
     @Override
     public Mono<ChatResponseDto> getAiReply(String request, Long articleId, Long discussionId, User user) {
@@ -74,8 +78,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
         // AI 서버 호출
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/chat") // AI 서버 uri 자리
-                        .queryParam("discussionId", discussion.getId())
+                        .path(aiUrl + "/feedback/discussion")
                         .build())
                 .bodyValue(aiRequest)
                 .retrieve()
