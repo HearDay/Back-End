@@ -1,19 +1,17 @@
 package HearDay.spring.domain.discussion.dto.request;
 
+import HearDay.spring.common.enums.AiChatLevelEnum;
+import HearDay.spring.common.enums.AiChatModeEnum;
 import HearDay.spring.common.enums.DiscussionRoleEnum;
 
 import java.util.List;
 
 public record AiRequestDto(
-        Long discussionId,
-        String nickname,
-        String articleTitle,
+        String user_id,
+        String session_id,
         String content,
-        List<Message> previousMessages,
-        String message
+        String message,
+        AiChatModeEnum mode,
+        AiChatLevelEnum level
 ) {
-    public record Message(
-            DiscussionRoleEnum role,    // "user" 또는 "ai"
-            String content
-    ) {}
 }

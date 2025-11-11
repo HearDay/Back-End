@@ -29,3 +29,7 @@ kakao:
   auth:
     client: test-kakao-client-id
     redirect: test-kakao-redirect-url
+
+ai:
+  api:
+    url: http://localhost:8000

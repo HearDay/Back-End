@@ -1,8 +1,10 @@
 package HearDay.spring.domain.article.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
+import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.article.dto.ArticleResponseDto;
 import HearDay.spring.domain.article.dto.ArticleSearchDto;
+import HearDay.spring.domain.article.dto.RecommendResponseDto;
 import HearDay.spring.domain.article.service.ArticleService;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.global.annotation.AuthUser;
@@ -44,5 +46,15 @@ public class ArticleController {
         
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(article));
+    }
+
+    @GetMapping("/category")
+    @Operation(summary = "카테고리별 뉴스 추천", description = "카테고리 별로 해당 유저에게 뉴스를 추천해줍니다.")
+    public ResponseEntity<CommonApiResponse<List<RecommendResponseDto>>> getCategoryArticles(
+            @AuthUser User user,
+            @RequestParam CategoryEnum category) {
+        List<RecommendResponseDto> result = articleService.getCategoryRecommend(user, category);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(result));
     }
 }

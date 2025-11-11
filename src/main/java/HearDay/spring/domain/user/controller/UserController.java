@@ -92,7 +92,7 @@ public class UserController {
             @RequestParam String code, HttpServletResponse httpServletResponse
     ) throws IOException {
         UserLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
-        String redirectUrl = backendUrl + "/login/success?accessToken=" + result.accessToken() + "?refreshToken=" + result.refreshToken();
+        String redirectUrl = backendUrl + "/login/success?accessToken=" + result.accessToken() + "&refreshToken=" + result.refreshToken();
 
         httpServletResponse.sendRedirect(redirectUrl);
     }
@@ -131,6 +131,7 @@ public class UserController {
     }
 
     @PostMapping("/send")
+    @Operation(summary = "이메일 인증 요청 API")
     public ResponseEntity<CommonApiResponse<Void>> sendEmail(
             @RequestBody String email
     ) {
@@ -141,6 +142,7 @@ public class UserController {
     }
 
     @PostMapping("/verify")
+    @Operation(summary = "이메일 검증 API")
     public ResponseEntity<CommonApiResponse<Void>> verifyEmail(
             @RequestBody String email,
             @RequestParam String code

@@ -42,3 +42,6 @@ kakao:
     redirect: ${KAKAO_REDIRECT_URL}
 backend:
   url: ${BACKEND_URL}
+ai:
+  api:
+    url: ${AI_URL}
