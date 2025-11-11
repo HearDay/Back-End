@@ -44,4 +44,4 @@ backend:
   url: ${BACKEND_URL}
 ai:
   api:
-    url: ${AI_URL}
+    url: ${AI_API_URL}
