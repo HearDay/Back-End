@@ -3,7 +3,7 @@ package HearDay.spring.common.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum AiChatModeEnum {
-    OPEN("open"),
+    OPEN("open_question"),
     FOLLOWUP("followup");
 
     private final String value;

@@ -1,8 +1,11 @@
 package HearDay.spring.domain.discussion.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
+import HearDay.spring.domain.discussion.dto.request.ChatRequestDto;
+import HearDay.spring.domain.discussion.dto.response.ChatResponseDto;
 import HearDay.spring.domain.discussion.dto.response.DiscussionContentDto;
 import HearDay.spring.domain.discussion.dto.response.DiscussionListDto;
+import HearDay.spring.domain.discussion.service.ChatCommandService;
 import HearDay.spring.domain.discussion.service.DiscussionQueryService;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.global.annotation.AuthUser;
@@ -13,10 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DiscussionController {
 
     private final DiscussionQueryService discussionQueryService;
+    private final ChatCommandService chatCommandService;
 
     @GetMapping
     @Operation(summary = "토론 기록 전체 조회 API")
@@ -58,5 +60,19 @@ public class DiscussionController {
         DiscussionContentDto result = discussionQueryService.getDiscussionContent(user, discussionId, pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("조회에 성공했습니다.", result));
+    }
+
+    @PostMapping("/chat/{articleId}")
+    @Operation(summary = "AI 토론(채팅) API", description = "채팅 토론에 사용하는 API입니다. 채팅 첫 전송 시 discussionId는 보내지 않아도 됩니다.")
+    public ResponseEntity<CommonApiResponse<ChatResponseDto>> postChat(
+            @RequestParam(required = false) Long discussionId,
+            @PathVariable Long articleId,
+            @RequestBody ChatRequestDto request,
+            @AuthUser User user
+    ) {
+        ChatResponseDto result = chatCommandService.getAiReply(request, articleId, discussionId, user);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("채팅 요청에 성공했습니다.", result));
     }
 }
