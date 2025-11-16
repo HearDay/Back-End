@@ -1,5 +1,6 @@
 package HearDay.spring.domain.article.service;
 
+import HearDay.spring.common.enums.AgeGroup;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.article.dto.ArticleResponseDto;
 import HearDay.spring.domain.article.dto.ArticleSearchDto;
@@ -30,6 +31,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final UserRecentArticleService recentArticleService;
+    private final ArticleViewCountService articleViewCountService;
     private final WebClient webClient;
 
     @Value("${ai.api.url}")
@@ -42,15 +44,16 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponseDto getArticle(Long userId, Long id) {
+    public ArticleResponseDto getArticle(User user, Long id) {
         Article article =
                 articleRepository
                         .findByIdWithDetail(id)
                         .orElseThrow(() -> new ArticleException.ArticleNotFoundException(id));
 
-        // 로그인한 사용자만 최근 본 게시글에 추가
-        if (userId != null) {
-            recentArticleService.addRecentArticle(userId, article);
+        if (user != null) {
+            recentArticleService.addRecentArticle(user.getId(), article);
+            AgeGroup ageGroup = AgeGroup.fromAge(user.getAge());
+            articleViewCountService.incrementViewCount(user.getId(), article.getId(), ageGroup, user.getGender());
         }
 
         return ArticleResponseDto.fromWithDetail(article);
@@ -82,5 +85,25 @@ public class ArticleService {
             log.error("AI 서버 통신 중 예외 발생 (userId: {}, category: {}): {}", user.getId(), category, e.getMessage());
             return List.of();
         }
+    }
+    
+    public List<ArticleResponseDto> getTopArticlesByDemographic(User user) {
+        AgeGroup ageGroup = AgeGroup.fromAge(user.getAge());
+        
+        if (ageGroup == null || user.getGender() == null) {
+            log.warn("User age or gender is not set. Cannot get top articles for userId: {}", user.getId());
+            return List.of();
+        }
+        
+        List<Long> topArticleIds = articleViewCountService.getTopArticles(ageGroup, user.getGender());
+        
+        if (topArticleIds.isEmpty()) {
+            return List.of();
+        }
+        
+        // Article ID 목록으로 실제 Article 조회
+        return articleRepository.findAllById(topArticleIds).stream()
+                .map(ArticleResponseDto::from)
+                .toList();
     }
 }

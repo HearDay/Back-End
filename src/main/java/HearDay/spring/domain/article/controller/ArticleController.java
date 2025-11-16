@@ -34,16 +34,14 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "글 세부정보 조회", description = "특정 글의 세부정보를 조회합니다. 로그인한 사용자의 경우 최근 본 게시글에 자동 추가됩니다")
+    @Operation(summary = "글 세부정보 조회", description = "특정 글의 세부정보를 조회합니다. 로그인한 사용자의 경우 최근 본 게시글에 자동 추가되고 조회수가 증가합니다")
     public ResponseEntity<CommonApiResponse<ArticleResponseDto>> getArticle(
             @AuthUser User user,  // null 가능 (비로그인 사용자)
             @PathVariable Long id) {
         
-        ArticleResponseDto article = articleService.getArticle(
-            user != null ? user.getId() : null, 
-            id
-        );
-        
+        ArticleResponseDto article;
+        article = articleService.getArticle(user, id);
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(article));
     }
@@ -54,6 +52,16 @@ public class ArticleController {
             @AuthUser User user,
             @RequestParam CategoryEnum category) {
         List<RecommendResponseDto> result = articleService.getCategoryRecommend(user, category);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success(result));
+    }
+    
+    @GetMapping("/top-by-demographic")
+    @Operation(summary = "연령대 & 성별 맞춤 인기 기사 Top 5", 
+               description = "사용자의 연령대와 성별에 맞는 가장 인기있는 기사 5개를 조회합니다. (24시간 기준)")
+    public ResponseEntity<CommonApiResponse<List<ArticleResponseDto>>> getTopArticlesByDemographic(
+            @AuthUser User user) {
+        List<ArticleResponseDto> result = articleService.getTopArticlesByDemographic(user);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(result));
     }
