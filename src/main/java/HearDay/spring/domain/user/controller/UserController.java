@@ -4,6 +4,7 @@ import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.*;
 import HearDay.spring.domain.user.dto.response.HomeResponseDto;
+import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.UserResponseDto;
 import HearDay.spring.domain.user.entity.User;
@@ -14,6 +15,7 @@ import HearDay.spring.domain.user.service.UserQueryService;
 import HearDay.spring.global.annotation.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -151,5 +153,28 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success(null));
+    }
+
+    @GetMapping("/profile/gender-age")
+    @Operation(summary = "성별 및 나이 조회 API", description = "사용자의 성별과 나이 정보를 조회하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<UserGenderAgeResponseDto>> getGenderAndAge(
+            @AuthUser User user
+    ) {
+        UserGenderAgeResponseDto result = userQueryService.getGenderAndAge(user);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("성별 및 나이 조회에 성공했습니다.", result));
+    }
+
+    @PatchMapping("/profile/gender-age")
+    @Operation(summary = "성별 및 나이 수정 API", description = "사용자의 성별과 나이 정보를 수정하는 API입니다. {M/F/UNKNOWN}")
+    public ResponseEntity<CommonApiResponse<UserGenderAgeResponseDto>> updateGenderAndAge(
+            @AuthUser User user,
+            @Valid @RequestBody UserGenderAgeUpdateRequestDto request
+    ) {
+        UserGenderAgeResponseDto result = userCommandService.updateGenderAndAge(user, request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("성별 및 나이 수정에 성공했습니다.", result));
     }
 }

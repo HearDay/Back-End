@@ -1,7 +1,6 @@
 package HearDay.spring.domain.articlerecommend.entity;
 
 import HearDay.spring.common.entity.BaseEntity;
-import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.common.enums.RecommendEnum;
 import HearDay.spring.domain.article.entity.Article;
 import jakarta.persistence.*;
@@ -28,7 +27,7 @@ public class ArticleRecommend extends BaseEntity {
             name = "article_recommend_vector", // 별도 테이블 생성
             joinColumns = @JoinColumn(name = "article_recommend_id") // Article 엔티티와 매핑
     )
-    @Column(name = "sbertVector")
+    @Column(name = "sbertVector", columnDefinition = "TEXT")
     private List<String> sbertVector;
 
     @Enumerated(EnumType.STRING)
