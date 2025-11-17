@@ -2,13 +2,15 @@ package HearDay.spring.domain.user.entity;
 
 import HearDay.spring.common.entity.BaseEntity;
 import HearDay.spring.common.enums.CategoryEnum;
+import HearDay.spring.common.enums.Gender;
 import HearDay.spring.domain.discussion.entity.Discussion;
 import HearDay.spring.domain.wordbookmark.entity.UserWordBookmark;
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,6 +37,11 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Integer level;
 
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    private Integer age;
+
     @ElementCollection(targetClass = CategoryEnum.class)
     @CollectionTable(
             name = "user_category", // 별도 테이블 생성
@@ -53,5 +60,10 @@ public class User extends BaseEntity {
 
     public void changePassword(String newPassword, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(newPassword);
+    }
+
+    public void updateGenderAndAge(Gender gender, Integer age) {
+        this.gender = gender;
+        this.age = age;
     }
 }

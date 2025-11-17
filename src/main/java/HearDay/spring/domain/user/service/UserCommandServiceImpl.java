@@ -1,11 +1,9 @@
 package HearDay.spring.domain.user.service;
 
 import HearDay.spring.common.enums.CategoryEnum;
-import HearDay.spring.domain.user.dto.request.KakaoRequestDto;
-import HearDay.spring.domain.user.dto.request.UserLoginRequestDto;
-import HearDay.spring.domain.user.dto.request.UserPasswordRequestDto;
-import HearDay.spring.domain.user.dto.request.UserRequestDto;
+import HearDay.spring.domain.user.dto.request.*;
 import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
+import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -211,5 +208,12 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     private String generateCode() {
         return String.valueOf((int)(Math.random() * 900000) + 100000); // 6자리 숫자
+    }
+
+    @Override
+    @Transactional
+    public UserGenderAgeResponseDto updateGenderAndAge(User user, UserGenderAgeUpdateRequestDto request) {
+        user.updateGenderAndAge(request.gender(), request.age());
+        return UserGenderAgeResponseDto.from(userRepository.save(user));
     }
 }

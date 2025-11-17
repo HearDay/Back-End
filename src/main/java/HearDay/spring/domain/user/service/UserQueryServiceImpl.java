@@ -3,6 +3,7 @@ package HearDay.spring.domain.user.service;
 import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.article.repository.ArticleRepository;
 import HearDay.spring.domain.user.dto.response.HomeResponseDto;
+import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -120,5 +120,10 @@ public class UserQueryServiceImpl implements UserQueryService {
         public String getImageUrl() {
             return imageUrl;
         }
+    }
+
+    @Override
+    public UserGenderAgeResponseDto getGenderAndAge(User user) {
+        return UserGenderAgeResponseDto.from(user);
     }
 }
