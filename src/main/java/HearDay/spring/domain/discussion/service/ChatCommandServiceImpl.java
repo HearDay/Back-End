@@ -18,6 +18,7 @@ import HearDay.spring.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,6 +26,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -80,22 +82,24 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                 request.level()
         );
 
-        ChatResponseDto result = requestAiDiscussion(aiRequest);
+        String result = requestAiDiscussion(aiRequest);
 
         discussionContentRepository.save(
                 DiscussionContent.builder()
                         .discussion(discussion)
                         .role(DiscussionRoleEnum.AI)
-                        .content(result.reply())
+                        .content(result)
                         .build()
         );
 
-        return result;
+        return new ChatResponseDto(
+            result, discussion.getId()
+        );
     }
 
-    public ChatResponseDto requestAiDiscussion(AiRequestDto requestDto) {
+    public String requestAiDiscussion(AiRequestDto requestDto) {
         try {
-            return WebClient.builder()
+            Map<String, Object> response = WebClient.builder()
                     .build()
                     .post()
                     .uri(aiUrl + "/feedback/discussion")
@@ -104,12 +108,16 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                     .onStatus(
                             HttpStatusCode::is5xxServerError,
                             clientResponse -> {
-                                log.error("AI 서버 오류 (ai토론 ID: {}): {}", requestDto.session_id(), clientResponse.statusCode());
+                                log.error("AI 서버 오류 (ai토론 ID: {}): {}",
+                                        requestDto.session_id(), clientResponse.statusCode());
                                 return Mono.error(new RuntimeException("AI 서버에서 오류가 발생했습니다."));
                             }
                     )
-                    .bodyToMono(ChatResponseDto.class)
-                    .block(); // Mono를 동기적으로 받아서 반환
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                    .block();
+
+            return response != null ? (String) response.get("reply") : null;
+
         } catch (WebClientResponseException e) {
             log.error("AI 서버 요청 실패 (status={}, body={}): {}",
                     e.getStatusCode(), e.getResponseBodyAsString(), e.getMessage());

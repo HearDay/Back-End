@@ -1,5 +1,6 @@
 package HearDay.spring.domain.discussion.dto.response;
 
 public record ChatResponseDto(
-        String reply
+        String reply,
+        Long discussionId
 ) {}
