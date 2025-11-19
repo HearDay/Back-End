@@ -33,6 +33,12 @@ public class ArticleRecommend extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private RecommendEnum status;
 
+    @Column(name = "bias_label", columnDefinition = "TEXT")
+    private String biasLabel;
+
+    @Column(name = "bias_score", columnDefinition = "FLOAT")
+    private Float biasScore;
+
     @OneToOne(mappedBy = "articleRecommend", fetch = FetchType.LAZY)
     private Article article;
 }
