@@ -37,7 +37,10 @@ public enum ErrorCode {
     WORD_ALREADY_BOOKMARKED_TODAY(400, "UW002", "오늘 이미 같은 단어를 저장했습니다."),
 
     // Discussion 도메인
-    DISCUSSION_NOT_EXISTS(200, "D001", "토론이 존재하지 않습니다.");
+    DISCUSSION_NOT_EXISTS(200, "D001", "토론이 존재하지 않습니다."),
+    
+    ARTICLE_QUIZ_NOT_FOUND(404, "AQ001", "퀴즈를 찾을 수 없습니다."),
+    ARTICLE_QUIZ_ALREADY_SOLVED(400, "AQ002", "이미 풀이한 퀴즈입니다.");
 
     private final int status;
     private final String code;
