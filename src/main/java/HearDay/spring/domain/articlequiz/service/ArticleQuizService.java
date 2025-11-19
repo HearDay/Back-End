@@ -1,7 +1,6 @@
 package HearDay.spring.domain.articlequiz.service;
 
 import HearDay.spring.domain.articlequiz.dto.ArticleQuizDto;
-import HearDay.spring.domain.articlequiz.dto.SubmitQuizAnswerResponse;
 import HearDay.spring.domain.articlequiz.entity.ArticleQuiz;
 import HearDay.spring.domain.articlequiz.entity.ArticleQuizUserResult;
 import HearDay.spring.domain.articlequiz.exception.ArticleQuizException;
@@ -34,7 +33,7 @@ public class ArticleQuizService {
     }
 
     @Transactional
-    public SubmitQuizAnswerResponse submitQuizAnswer(Long quizId, User user) {
+    public void submitQuizAnswer(Long quizId, User user) {
         ArticleQuiz quiz = articleQuizRepository.findById(quizId)
                 .orElseThrow(() -> new ArticleQuizException.QuizNotFoundException(quizId));
 
@@ -50,7 +49,5 @@ public class ArticleQuizService {
                 .build();
 
         articleQuizUserResultRepository.save(result);
-
-        return new SubmitQuizAnswerResponse(quiz.getExplanation());
     }
 }

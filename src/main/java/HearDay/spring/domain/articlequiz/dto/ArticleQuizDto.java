@@ -11,6 +11,7 @@ public record ArticleQuizDto(
         @Schema(description = "선택지 2", example = "올해 연내 선정할 예정이다.") String option2,
         @Schema(description = "선택지 3", example = "주주총회에서 선정할 예정이다.") String option3,
         @Schema(description = "정답 번호 (1, 2, 3 중 하나)", example = "1") Integer correctAnswer,
+        @Schema(description = "정답 설명", example = "뉴스에 따르면 KT는 차기 CEO 최종 후보를 내년 3월에 선정할 예정입니다.") String explanation,
         @Schema(description = "풀었는지 여부", example = "true") Boolean isSolved
 ) {
     public static ArticleQuizDto from(ArticleQuiz quiz, Boolean isSolved) {
@@ -21,6 +22,7 @@ public record ArticleQuizDto(
                 quiz.getOption2(),
                 quiz.getOption3(),
                 quiz.getCorrectAnswer(),
+                quiz.getExplanation(),
                 isSolved
         );
     }

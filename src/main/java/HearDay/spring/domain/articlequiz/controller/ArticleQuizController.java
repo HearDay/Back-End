@@ -2,7 +2,6 @@ package HearDay.spring.domain.articlequiz.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.domain.articlequiz.dto.ArticleQuizDto;
-import HearDay.spring.domain.articlequiz.dto.SubmitQuizAnswerResponse;
 import HearDay.spring.domain.articlequiz.service.ArticleQuizService;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.global.annotation.AuthUser;
@@ -32,12 +31,12 @@ public class ArticleQuizController {
     }
 
     @PostMapping("/{quizId}/solve")
-    @Operation(summary = "퀴즈 풀이 제출", description = "퀴즈를 풀었음을 기록하고 정답과 설명을 반환합니다. 프론트에서 정답을 맞췄을 때만 호출합니다.")
-    public ResponseEntity<CommonApiResponse<SubmitQuizAnswerResponse>> submitQuizAnswer(
+    @Operation(summary = "퀴즈 풀이 제출", description = "퀴즈를 풀었음을 기록합니다. 프론트에서 정답을 맞췄을 때만 호출합니다.")
+    public ResponseEntity<CommonApiResponse<Void>> submitQuizAnswer(
             @AuthUser User user,
             @PathVariable Long quizId) {
-        SubmitQuizAnswerResponse response = articleQuizService.submitQuizAnswer(quizId, user);
+        articleQuizService.submitQuizAnswer(quizId, user);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonApiResponse.success(response));
+                .body(CommonApiResponse.success("퀴즈 풀이가 제출되었습니다.", null));
     }
 }
