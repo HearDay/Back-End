@@ -9,6 +9,7 @@ import HearDay.spring.domain.article.repository.ArticleRepository;
 import HearDay.spring.domain.discussion.dto.request.AiRequestDto;
 import HearDay.spring.domain.discussion.dto.request.ChatRequestDto;
 import HearDay.spring.domain.discussion.dto.response.ChatResponseDto;
+import HearDay.spring.domain.discussion.dto.response.VoiceResponseDto;
 import HearDay.spring.domain.discussion.entity.Discussion;
 import HearDay.spring.domain.discussion.entity.DiscussionContent;
 import HearDay.spring.domain.discussion.exception.DiscussionException;
@@ -21,11 +22,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -36,6 +37,8 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final ArticleRepository articleRepository;
     private final DiscussionContentRepository discussionContentRepository;
     private final DiscussionRepository discussionRepository;
+    private final SpeechToTextService sttService;
+    private final TextToSpeechService ttsService;
 
     @Value("${ai.api.url}")
     private String aiUrl;
@@ -126,5 +129,68 @@ public class ChatCommandServiceImpl implements ChatCommandService {
             log.error("AI 서버 통신 중 예외 발생: {}", e.getMessage(), e);
             throw new RuntimeException("AI 서버 통신 중 오류가 발생했습니다.");
         }
+    }
+
+    @Override
+    public VoiceResponseDto getAiVoiceReply(Long discussionId, Long articleId, MultipartFile audioFile, AiChatLevelEnum level, User user) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ArticleException.ArticleNotFoundException(articleId));
+
+        // 첫 메세지면 새 토론 생성
+        Discussion discussion;
+        AiChatModeEnum mode;
+
+        if (discussionId == null) {
+            discussion = discussionRepository.save(
+                    Discussion.builder()
+                            .article(article)
+                            .user(user)
+                            .build()
+            );
+            mode = AiChatModeEnum.OPEN;
+        } else {
+            discussion = discussionRepository.findById(discussionId)
+                    .orElseThrow(() -> new DiscussionException.DiscussionNotFoundException(discussionId));
+            mode = AiChatModeEnum.FOLLOWUP;
+        }
+
+        String message = sttService.transcribe(audioFile, 16000);
+        System.out.println("stt 변환: " + message);
+
+        // 현재 유저 메세지 저장
+        discussionContentRepository.save(
+                DiscussionContent.builder()
+                        .discussion(discussion)
+                        .role(DiscussionRoleEnum.USER)
+                        .content(message)
+                        .build()
+        );
+
+        // AI 요청 DTO
+        AiRequestDto aiRequest = new AiRequestDto(
+                user.getId().toString(),
+                discussion.getId().toString(),
+                article.getDescription(),
+                message,
+                mode,
+                level
+        );
+
+        String result = requestAiDiscussion(aiRequest);
+
+        discussionContentRepository.save(
+                DiscussionContent.builder()
+                        .discussion(discussion)
+                        .role(DiscussionRoleEnum.AI)
+                        .content(result)
+                        .build()
+        );
+
+        String outputAudio = ttsService.synthesizeToBase64(result);
+
+        return new VoiceResponseDto(
+                outputAudio,
+                discussion.getId()
+        );
     }
 }
