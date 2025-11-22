@@ -3,6 +3,7 @@ package HearDay.spring.domain.user.controller;
 import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.*;
+import HearDay.spring.domain.user.dto.response.AlarmTimeResponse;
 import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
@@ -176,5 +177,26 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("성별 및 나이 수정에 성공했습니다.", result));
+    }
+
+    @GetMapping("/alarm")
+    @Operation(summary = "알람 시간 조회 API", description = "사용자의 알람 시간 설정을 조회하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<AlarmTimeResponse>> getAlarmTime(
+            @AuthUser User user
+    ) {
+        AlarmTimeResponse result = AlarmTimeResponse.from(user);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("알람 시간 조회에 성공했습니다.", result));
+    }
+
+    @PatchMapping("/alarm")
+    @Operation(summary = "알람 시간 설정 API", description = "사용자의 알람 시간을 설정하는 API입니다.")
+    public ResponseEntity<CommonApiResponse<Void>> updateAlarmTime(
+            @AuthUser User user,
+            @Valid @RequestBody UpdateAlarmTimeRequest request
+    ) {
+        userCommandService.updateAlarmTime(user, request.hour(), request.minute(), request.dayType());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("알람 시간 설정에 성공했습니다.", null));
     }
 }

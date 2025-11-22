@@ -41,4 +41,7 @@ public class ArticleRecommend extends BaseEntity {
 
     @OneToOne(mappedBy = "articleRecommend", fetch = FetchType.LAZY)
     private Article article;
+
+    @Column(name = "article_cluster_id")
+    private Integer articleClusterId;
 }

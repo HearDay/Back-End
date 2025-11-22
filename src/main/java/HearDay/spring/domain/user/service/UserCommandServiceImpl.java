@@ -1,5 +1,6 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.common.enums.AlarmDayType;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.*;
 import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
@@ -215,5 +216,12 @@ public class UserCommandServiceImpl implements UserCommandService {
     public UserGenderAgeResponseDto updateGenderAndAge(User user, UserGenderAgeUpdateRequestDto request) {
         user.updateGenderAndAge(request.gender(), request.age());
         return UserGenderAgeResponseDto.from(userRepository.save(user));
+    }
+
+    @Override
+    @Transactional
+    public void updateAlarmTime(User user, Integer hour, Integer minute, AlarmDayType dayType) {
+        user.updateAlarmTime(hour, minute, dayType);
+        userRepository.save(user);
     }
 }
