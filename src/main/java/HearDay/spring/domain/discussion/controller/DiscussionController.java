@@ -1,10 +1,12 @@
 package HearDay.spring.domain.discussion.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
+import HearDay.spring.common.enums.AiChatLevelEnum;
 import HearDay.spring.domain.discussion.dto.request.ChatRequestDto;
 import HearDay.spring.domain.discussion.dto.response.ChatResponseDto;
 import HearDay.spring.domain.discussion.dto.response.DiscussionContentDto;
 import HearDay.spring.domain.discussion.dto.response.DiscussionListDto;
+import HearDay.spring.domain.discussion.dto.response.VoiceResponseDto;
 import HearDay.spring.domain.discussion.service.ChatCommandService;
 import HearDay.spring.domain.discussion.service.DiscussionQueryService;
 import HearDay.spring.domain.user.entity.User;
@@ -15,9 +17,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -74,5 +77,19 @@ public class DiscussionController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("채팅 요청에 성공했습니다.", result));
+    }
+
+    @PostMapping(value = "/voice/{articleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "AI 토론(음성) API", description = "음성 토론에 사용하는 API입니다. 채팅 첫 전송 시 discussionId는 보내지 않아도 됩니다.")
+    public ResponseEntity<CommonApiResponse<VoiceResponseDto>> postVoice(
+            @RequestParam(required = false) Long discussionId,
+            @PathVariable Long articleId,
+            @RequestPart("audioFile") MultipartFile audioFile,
+            @RequestParam AiChatLevelEnum level,
+            @AuthUser User user ) {
+        VoiceResponseDto result = chatCommandService.getAiVoiceReply(discussionId, articleId, audioFile, level, user);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("토론 요청에 성공했습니다.", result));
     }
 }

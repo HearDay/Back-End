@@ -33,3 +33,6 @@ kakao:
 ai:
   api:
     url: http://localhost:8000
+
+google:
+  credentials: src/test/resources/stt.json

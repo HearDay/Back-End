@@ -45,3 +45,5 @@ backend:
 ai:
   api:
     url: ${AI_API_URL}
+google:
+  credentials: ${GOOGLE_APPLICATION_CREDENTIALS}

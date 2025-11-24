@@ -1,10 +1,16 @@
 # Dockerfile
 FROM eclipse-temurin:17-jre-alpine
 
+# ffmpeg 설치
+RUN apk add --no-cache ffmpeg
+
 WORKDIR /app
 
 # JAR 파일 복사
 COPY build/libs/*.jar app.jar
+
+# Google STT credentials 복사
+COPY stt.json /app/credentials/stt.json
 
 # 포트 노출
 EXPOSE 8080
