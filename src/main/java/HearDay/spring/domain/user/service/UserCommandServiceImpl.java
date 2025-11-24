@@ -20,8 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class UserCommandServiceImpl implements UserCommandService {
@@ -142,11 +140,11 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     @Transactional
-    public void registerCategories(List<CategoryEnum> request, User user) {
-        User persistedUser = userRepository.findByEmail(user.getEmail())
-                .orElseThrow(() -> new UserException.UserNotFoundException(user.getEmail()));
-
-        persistedUser.getUserCategory().addAll(request);
+    public void registerCategories(UserInfoRequestDto request, User user) {
+        user.updateCategory(request.category());
+        user.updateAlarmTime(request.hour(), request.minute(), request.dayType());
+        user.updateGenderAndAge(request.gender(), request.age());
+        userRepository.save(user);
     }
 
     @Override
@@ -173,26 +171,6 @@ public class UserCommandServiceImpl implements UserCommandService {
         System.out.println("새로 발급된 Access Token: " + newAccessToken);
         return newAccessToken;
     }
-//    public String refreshAccessToken(String refreshToken) {
-//        // 서명 검증
-//        if (!jwtTokenProvider.validateToken(refreshToken)) {
-//            throw new UserException.RefreshTokenException();
-//        }
-//
-//        // 만료 여부 확인
-//        if (jwtTokenProvider.isExpired(refreshToken)) {
-//            throw new UserException.RefreshTokenException();
-//        }
-//
-//        String userEmail = jwtTokenProvider.getUsernameFromToken(refreshToken);
-//        String savedRefreshToken = refreshTokenService.getRefreshToken(userEmail);
-//
-//        if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
-//            throw new UserException.RefreshTokenException();
-//        }
-//
-//        return jwtTokenProvider.generateToken(userEmail);
-//    }
 
     @Override
     public void sendAuthCode(String email) {
