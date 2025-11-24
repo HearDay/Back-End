@@ -69,6 +69,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Discussion> discussionList = new ArrayList<>();
 
+    public void updateCategory(List<CategoryEnum> category) {
+        this.userCategory = category;
+    }
+
     public void changePassword(String newPassword, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(newPassword);
     }

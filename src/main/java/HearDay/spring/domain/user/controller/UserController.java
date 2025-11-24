@@ -101,14 +101,14 @@ public class UserController {
     }
 
     @PostMapping("/category")
-    @Operation(summary = "사용자 선호 카테고리 등록 API", description = "회원가입 시 사용하는 카테고리 등록 API입니다.")
+    @Operation(summary = "사용자 정보(카테고리, 성별, 나이, 알림) 등록 API", description = "회원가입 시 사용하는 카테고리 등록 API입니다.")
     public ResponseEntity<CommonApiResponse<Void>> registerCategory(
-            @RequestBody List<CategoryEnum> request,
+            @RequestBody UserInfoRequestDto request,
             @AuthUser User user
     ) {
         userCommandService.registerCategories(request, user);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonApiResponse.success("카테고리 등록에 성공했습니다.", null));
+                .body(CommonApiResponse.success("user 정보 등록에 성공했습니다.", null));
     }
 
     @GetMapping("/home")
