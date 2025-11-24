@@ -1,6 +1,7 @@
 package HearDay.spring.domain.user.entity;
 
 import HearDay.spring.common.entity.BaseEntity;
+import HearDay.spring.common.enums.AlarmDayType;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.common.enums.Gender;
 import HearDay.spring.domain.discussion.entity.Discussion;
@@ -50,6 +51,16 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private List<CategoryEnum> userCategory;
 
+    @Column(name = "alarm_hour")
+    private Integer alarmHour; // 알람 시간 (0-23)
+
+    @Column(name = "alarm_minute")
+    private Integer alarmMinute; // 알람 분 (0-59)
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "alarm_day_type")
+    private AlarmDayType alarmDayType; // 알람 요일 타입 (매일/평일/주말)
+
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserWordBookmark> userWordBookmarkList = new ArrayList<>();
@@ -65,5 +76,11 @@ public class User extends BaseEntity {
     public void updateGenderAndAge(Gender gender, Integer age) {
         this.gender = gender;
         this.age = age;
+    }
+
+    public void updateAlarmTime(Integer hour, Integer minute, AlarmDayType dayType) {
+        this.alarmHour = hour;
+        this.alarmMinute = minute;
+        this.alarmDayType = dayType;
     }
 }
