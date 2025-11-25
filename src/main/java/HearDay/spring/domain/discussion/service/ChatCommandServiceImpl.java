@@ -198,7 +198,8 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         return new VoiceResponseDto(
                 outputAudio,
-                discussion.getId()
+                discussion.getId(),
+                article.getTitle()
         );
     }
 }
