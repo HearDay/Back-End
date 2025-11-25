@@ -87,4 +87,8 @@ public class User extends BaseEntity {
         this.alarmMinute = minute;
         this.alarmDayType = dayType;
     }
+
+    public void addPoint(int amount) {
+        this.point += amount;
+    }
 }

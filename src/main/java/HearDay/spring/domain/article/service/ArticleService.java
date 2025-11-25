@@ -9,6 +9,7 @@ import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.article.exception.ArticleException;
 import HearDay.spring.domain.article.repository.ArticleRepository;
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.user.repository.UserRepository;
 import HearDay.spring.domain.usercalendar.service.UserCalendarService;
 import HearDay.spring.domain.userrecentarticle.service.UserRecentArticleService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class ArticleService {
     private final UserRecentArticleService recentArticleService;
     private final ArticleViewCountService articleViewCountService;
     private final UserCalendarService userCalendarService;
+    private final UserRepository userRepository;
     private final WebClient webClient;
 
     @Value("${ai.api.url}")
@@ -56,9 +58,11 @@ public class ArticleService {
             recentArticleService.addRecentArticle(user.getId(), article);
             AgeGroup ageGroup = AgeGroup.fromAge(user.getAge());
             articleViewCountService.incrementViewCount(user.getId(), article.getId(), ageGroup, user.getGender());
-        }
 
-        userCalendarService.checkAttendance(user);
+            userCalendarService.checkAttendance(user);
+            user.addPoint(5);
+            userRepository.save(user);
+        }
 
         return ArticleResponseDto.fromWithDetail(article);
     }

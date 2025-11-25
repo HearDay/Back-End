@@ -16,6 +16,7 @@ import HearDay.spring.domain.discussion.exception.DiscussionException;
 import HearDay.spring.domain.discussion.repository.DiscussionContentRepository;
 import HearDay.spring.domain.discussion.repository.DiscussionRepository;
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final DiscussionRepository discussionRepository;
     private final SpeechToTextService sttService;
     private final TextToSpeechService ttsService;
+    private final UserRepository userRepository;
 
     @Value("${ai.api.url}")
     private String aiUrl;
@@ -60,6 +62,9 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                             .build()
             );
             mode = AiChatModeEnum.OPEN;
+
+            user.addPoint(10);
+            userRepository.save(user);
         } else {
             discussion = discussionRepository.findById(discussionId)
                     .orElseThrow(() -> new DiscussionException.DiscussionNotFoundException(discussionId));
@@ -148,6 +153,9 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                             .build()
             );
             mode = AiChatModeEnum.OPEN;
+
+            user.addPoint(10);
+            userRepository.save(user);
         } else {
             discussion = discussionRepository.findById(discussionId)
                     .orElseThrow(() -> new DiscussionException.DiscussionNotFoundException(discussionId));
