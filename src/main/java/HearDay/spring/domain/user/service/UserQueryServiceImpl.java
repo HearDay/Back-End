@@ -4,9 +4,12 @@ import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.article.repository.ArticleRepository;
 import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
+import HearDay.spring.domain.user.dto.response.UserProfileResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
 import HearDay.spring.domain.user.repository.UserRepository;
+import HearDay.spring.domain.usercalendar.entity.UserCalendar;
+import HearDay.spring.domain.usercalendar.repository.UserCalendarRepository;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +35,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
     private final WebClient webClient;
+    private final UserCalendarRepository userCalendarRepository;
 
     @Value("${ai.api.url}")
     private String aiUrl;
@@ -59,8 +64,11 @@ public class UserQueryServiceImpl implements UserQueryService {
 
         List<HomeResponseDto.ArticleDto> recommendedArticles = fetchRecommendedArticlesFromAiServer(user.getId());
 
+        int point = user.getPoint();
+        int level = calculateLevel(point);
+
         return new HomeResponseDto(
-                user.getLevel(),
+                level,
                 user.getNickname(),
                 formattedDate,
                 recommendedArticles
@@ -125,5 +133,38 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public UserGenderAgeResponseDto getGenderAndAge(User user) {
         return UserGenderAgeResponseDto.from(user);
+    }
+
+    @Override
+    public UserProfileResponseDto getUserProfile(User user, int year, int month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        List<UserProfileResponseDto.Attendance> attendanceList =
+                userCalendarRepository.findAllByUserAndAttendanceDateBetween(user, startDate, endDate)
+                        .stream()
+                        .map(UserCalendar::getAttendanceDate)
+                        .map(UserProfileResponseDto.Attendance::new)
+                        .toList();
+
+        int point = user.getPoint();
+        int level = calculateLevel(point);
+
+        return new UserProfileResponseDto(
+                user.getNickname(),
+                user.getEmail(),
+                level,
+                point,
+                attendanceList
+        );
+    }
+
+    private int calculateLevel(int point) {
+        if (point < 50) return 1;
+        if (point < 130) return 2;
+        if (point < 250) return 3;
+        if (point < 430) return 4;
+        if (point < 680) return 5;
+        return 6;
     }
 }

@@ -36,7 +36,7 @@ public class User extends BaseEntity {
     private String phone;
 
     @Column(nullable = false)
-    private Integer level;
+    private Integer point;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -86,5 +86,9 @@ public class User extends BaseEntity {
         this.alarmHour = hour;
         this.alarmMinute = minute;
         this.alarmDayType = dayType;
+    }
+
+    public void addPoint(int amount) {
+        this.point += amount;
     }
 }

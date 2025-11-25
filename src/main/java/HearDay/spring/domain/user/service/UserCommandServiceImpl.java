@@ -45,7 +45,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .password(passwordEncoder.encode(request.password()))
                 .email(request.email())
                 .phone(request.phone())
-                .level(1)
+                .point(0)
                 .build();
 
         userRepository.save(user);
@@ -132,7 +132,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .password(null)
                 .email(kakaoProfile.kakao_account().email())
                 .phone(null)
-                .level(1)
+                .point(0)
                 .userCategory(null)
                 .build();
         return userRepository.save(user);

@@ -3,11 +3,7 @@ package HearDay.spring.domain.user.controller;
 import HearDay.spring.common.dto.response.CommonApiResponse;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.*;
-import HearDay.spring.domain.user.dto.response.AlarmTimeResponse;
-import HearDay.spring.domain.user.dto.response.HomeResponseDto;
-import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
-import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
-import HearDay.spring.domain.user.dto.response.UserResponseDto;
+import HearDay.spring.domain.user.dto.response.*;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.service.MailService;
 import HearDay.spring.domain.user.service.RefreshTokenService;
@@ -198,5 +194,18 @@ public class UserController {
         userCommandService.updateAlarmTime(user, request.hour(), request.minute(), request.dayType());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("알람 시간 설정에 성공했습니다.", null));
+    }
+
+    @GetMapping("/profile")
+    @Operation(summary = "프로필 정보 조회 API")
+    public ResponseEntity<CommonApiResponse<?>> getProfile(
+            @AuthUser User user,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        UserProfileResponseDto result = userQueryService.getUserProfile(user, year, month);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("조회에 성공했습니다.", result));
     }
 }

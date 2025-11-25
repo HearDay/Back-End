@@ -7,6 +7,7 @@ import HearDay.spring.domain.articlequiz.exception.ArticleQuizException;
 import HearDay.spring.domain.articlequiz.repository.ArticleQuizRepository;
 import HearDay.spring.domain.articlequiz.repository.ArticleQuizUserResultRepository;
 import HearDay.spring.domain.user.entity.User;
+import HearDay.spring.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class ArticleQuizService {
 
     private final ArticleQuizRepository articleQuizRepository;
     private final ArticleQuizUserResultRepository articleQuizUserResultRepository;
+    private final UserRepository userRepository;
 
     public ArticleQuizDto getArticleQuiz(Long articleId, Long userId) {
         ArticleQuiz quiz = articleQuizRepository.findByArticleId(articleId)
@@ -49,5 +51,8 @@ public class ArticleQuizService {
                 .build();
 
         articleQuizUserResultRepository.save(result);
+
+        user.addPoint(5);
+        userRepository.save(user);
     }
 }
