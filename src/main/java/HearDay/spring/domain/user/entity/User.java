@@ -36,7 +36,7 @@ public class User extends BaseEntity {
     private String phone;
 
     @Column(nullable = false)
-    private Integer level;
+    private Integer point;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
