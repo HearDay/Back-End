@@ -6,6 +6,8 @@ RUN apk add --no-cache ffmpeg
 
 WORKDIR /app
 
+RUN mkdir -p /var/log && chmod 777 /var/log
+
 # JAR 파일 복사
 COPY build/libs/*.jar app.jar
 
