@@ -15,6 +15,7 @@ import HearDay.spring.domain.userrecentarticle.service.UserRecentArticleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatusCode;
@@ -95,6 +96,10 @@ public class ArticleService {
         }
     }
     
+    @Cacheable(
+        value = "topArticlesByDemographic",
+        key = "#user.age + ':' + #user.gender"
+    )
     public List<ArticleResponseDto> getTopArticlesByDemographic(User user) {
         AgeGroup ageGroup = AgeGroup.fromAge(user.getAge());
         
@@ -103,6 +108,7 @@ public class ArticleService {
             return List.of();
         }
         
+
         List<Long> topArticleIds = articleViewCountService.getTopArticles(ageGroup, user.getGender());
         
         if (topArticleIds.isEmpty()) {

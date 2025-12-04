@@ -14,7 +14,6 @@ public class RefreshTokenService {
 
     public void saveRefreshToken(String email, String token) {
         redisService.setData("refresh:" + email, token, REFRESH_TOKEN_EXPIRE);
-        System.out.println("Refresh Token 저장: " + token);
     }
 
     public String getRefreshToken(String email) {
