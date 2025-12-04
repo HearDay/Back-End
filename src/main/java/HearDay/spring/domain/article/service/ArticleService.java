@@ -89,7 +89,9 @@ public class ArticleService {
                     .bodyToMono(new ParameterizedTypeReference<List<RecommendResponseDto>>() {
                     })
                     .blockOptional()
-                    .orElse(List.of());
+                    .orElse(articleRepository.searchArticles(new ArticleSearchDto(List.of(category), null) , Pageable.ofSize(5)).stream()
+                            .map(RecommendResponseDto::from)
+                            .toList());
         } catch (Exception e) {
             log.error("AI 서버 통신 중 예외 발생 (userId: {}, category: {}): {}", user.getId(), category, e.getMessage());
             return List.of();
