@@ -52,7 +52,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         // 첫 메세지면 새 토론 생성
         Discussion discussion;
-        AiChatModeEnum mode;
+        AiChatModeEnum mode = AiChatModeEnum.FOLLOWUP;
 
         if (discussionId == null) {
             discussion = discussionRepository.save(
@@ -61,14 +61,12 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                             .user(user)
                             .build()
             );
-            mode = AiChatModeEnum.OPEN;
 
             user.addPoint(10);
             userRepository.save(user);
         } else {
             discussion = discussionRepository.findById(discussionId)
                     .orElseThrow(() -> new DiscussionException.DiscussionNotFoundException(discussionId));
-            mode = AiChatModeEnum.FOLLOWUP;
         }
 
         // 현재 유저 메세지 저장
@@ -143,7 +141,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         // 첫 메세지면 새 토론 생성
         Discussion discussion;
-        AiChatModeEnum mode;
+        AiChatModeEnum mode = AiChatModeEnum.FOLLOWUP;
 
         if (discussionId == null) {
             discussion = discussionRepository.save(
@@ -152,14 +150,12 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                             .user(user)
                             .build()
             );
-            mode = AiChatModeEnum.OPEN;
 
             user.addPoint(10);
             userRepository.save(user);
         } else {
             discussion = discussionRepository.findById(discussionId)
                     .orElseThrow(() -> new DiscussionException.DiscussionNotFoundException(discussionId));
-            mode = AiChatModeEnum.FOLLOWUP;
         }
 
         String message = sttService.transcribe(audioFile, 16000);

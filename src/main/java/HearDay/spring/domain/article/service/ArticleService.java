@@ -15,6 +15,7 @@ import HearDay.spring.domain.userrecentarticle.service.UserRecentArticleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatusCode;
@@ -88,13 +89,19 @@ public class ArticleService {
                     .bodyToMono(new ParameterizedTypeReference<List<RecommendResponseDto>>() {
                     })
                     .blockOptional()
-                    .orElse(List.of());
+                    .orElse(articleRepository.searchArticles(new ArticleSearchDto(List.of(category), null) , Pageable.ofSize(5)).stream()
+                            .map(RecommendResponseDto::from)
+                            .toList());
         } catch (Exception e) {
             log.error("AI 서버 통신 중 예외 발생 (userId: {}, category: {}): {}", user.getId(), category, e.getMessage());
             return List.of();
         }
     }
     
+    @Cacheable(
+        value = "topArticlesByDemographic",
+        key = "#user.age + ':' + #user.gender"
+    )
     public List<ArticleResponseDto> getTopArticlesByDemographic(User user) {
         AgeGroup ageGroup = AgeGroup.fromAge(user.getAge());
         
@@ -103,6 +110,7 @@ public class ArticleService {
             return List.of();
         }
         
+
         List<Long> topArticleIds = articleViewCountService.getTopArticles(ageGroup, user.getGender());
         
         if (topArticleIds.isEmpty()) {

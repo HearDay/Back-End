@@ -1,5 +1,6 @@
 package HearDay.spring.domain.user.service;
 
+import HearDay.spring.domain.article.dto.ArticleSearchDto;
 import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.article.repository.ArticleRepository;
 import HearDay.spring.domain.user.dto.response.HomeResponseDto;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -62,7 +64,7 @@ public class UserQueryServiceImpl implements UserQueryService {
                 ))
                 .orElse("데이터 없음");
 
-        List<HomeResponseDto.ArticleDto> recommendedArticles = fetchRecommendedArticlesFromAiServer(user.getId());
+        List<HomeResponseDto.ArticleDto> recommendedArticles = fetchRecommendedArticlesFromAiServer(user);
 
         int point = user.getPoint();
         int level = calculateLevel(point);
@@ -75,15 +77,15 @@ public class UserQueryServiceImpl implements UserQueryService {
         );
     }
 
-    private List<HomeResponseDto.ArticleDto> fetchRecommendedArticlesFromAiServer(Long userId) {
+    private List<HomeResponseDto.ArticleDto> fetchRecommendedArticlesFromAiServer(User user) {
         try {
             List<AiArticle> aiArticles = webClient.get()
-                    .uri(aiUrl + "/users/{userId}/recommendations", userId)
+                    .uri(aiUrl + "/users/{userId}/recommendations", user.getId())
                     .retrieve()
                     .onStatus(
                             HttpStatusCode::is5xxServerError,
                             clientResponse -> {
-                                log.error("AI 서버 오류 (userId: {}): {}", userId, clientResponse.statusCode());
+                                log.error("AI 서버 오류 (userId: {}): {}", user.getId(), clientResponse.statusCode());
                                 return Mono.error(new RuntimeException("AI 서버에서 오류가 발생했습니다."));
                             }
                     )
@@ -91,6 +93,11 @@ public class UserQueryServiceImpl implements UserQueryService {
                     .blockOptional()
                     .orElse(List.of());
 
+            if(aiArticles.isEmpty()) {
+                return articleRepository.searchArticles(new ArticleSearchDto(user.getUserCategory(), null) , Pageable.ofSize(5)).stream()
+                        .map(HomeResponseDto.ArticleDto::from)
+                        .toList();
+            }
             return aiArticles.stream()
                     .map(a -> new HomeResponseDto.ArticleDto(
                             a.getId(),
@@ -101,7 +108,7 @@ public class UserQueryServiceImpl implements UserQueryService {
                     .toList();
 
         } catch (Exception e) {
-            log.error("AI 서버 통신 중 예외 발생 (userId: {}): {}", userId, e.getMessage());
+            log.error("AI 서버 통신 중 예외 발생 (userId: {}): {}", user.getId(), e.getMessage());
             return List.of();
         }
     }
