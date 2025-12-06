@@ -90,8 +90,8 @@ public class UserController {
     public void loginKakao(
             @RequestParam String code, HttpServletResponse httpServletResponse
     ) throws IOException {
-        UserLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
-        String redirectUrl = backendUrl + "/login/success?accessToken=" + result.accessToken() + "&refreshToken=" + result.refreshToken();
+        KakaoLoginResponseDto result = userCommandService.loginKakaoUser(code, httpServletResponse);
+        String redirectUrl = backendUrl + "/login/success?accessToken=" + result.accessToken() + "&refreshToken=" + result.refreshToken() + "&isNewUser=" + result.isNewUser();
 
         httpServletResponse.sendRedirect(redirectUrl);
     }

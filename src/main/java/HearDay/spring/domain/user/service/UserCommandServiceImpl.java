@@ -3,6 +3,7 @@ package HearDay.spring.domain.user.service;
 import HearDay.spring.common.enums.AlarmDayType;
 import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.*;
+import HearDay.spring.domain.user.dto.response.KakaoLoginResponseDto;
 import HearDay.spring.domain.user.dto.response.KakaoResponseDto;
 import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserLoginResponseDto;
@@ -19,6 +20,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -107,12 +110,15 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public UserLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
+    public KakaoLoginResponseDto loginKakaoUser(String code, HttpServletResponse httpServletResponse) {
         KakaoResponseDto oAuthtoken = kakaoUtil.requestToken(code);
         KakaoRequestDto kakaoProfile = kakaoUtil.requestProfile(oAuthtoken);
         String email = kakaoProfile.kakao_account().email();
 
-        User user = userRepository.findByEmail(email)
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        boolean isNewUser = optionalUser.isEmpty();
+
+        User user = optionalUser
                 .orElseGet(() -> createNewUser(kakaoProfile));
 
         String accessToken = jwtTokenProvider.generateToken(user.getEmail());
@@ -120,9 +126,10 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         refreshTokenService.saveRefreshToken(user.getEmail(), refreshToken);
 
-        return new UserLoginResponseDto(
+        return new KakaoLoginResponseDto(
                 accessToken,
-                refreshToken
+                refreshToken,
+                isNewUser
         );
     }
 
