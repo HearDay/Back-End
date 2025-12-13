@@ -208,4 +208,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonApiResponse.success("조회에 성공했습니다.", result));
     }
+
+    @GetMapping("/profile/info")
+    @Operation(summary = "유저 정보 상세 조회 API")
+    public ResponseEntity<CommonApiResponse<UserProfileInfoResponseDto>> getProfileInfo(
+            @AuthUser User user
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonApiResponse.success("조회에 성공했습니다.", userQueryService.getUserInfo(user)));
+    }
 }

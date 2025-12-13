@@ -5,6 +5,7 @@ import HearDay.spring.domain.article.entity.Article;
 import HearDay.spring.domain.article.repository.ArticleRepository;
 import HearDay.spring.domain.user.dto.response.HomeResponseDto;
 import HearDay.spring.domain.user.dto.response.UserGenderAgeResponseDto;
+import HearDay.spring.domain.user.dto.response.UserProfileInfoResponseDto;
 import HearDay.spring.domain.user.dto.response.UserProfileResponseDto;
 import HearDay.spring.domain.user.entity.User;
 import HearDay.spring.domain.user.exception.UserException;
@@ -173,5 +174,16 @@ public class UserQueryServiceImpl implements UserQueryService {
         if (point < 430) return 4;
         if (point < 680) return 5;
         return 6;
+    }
+
+    @Override
+    public UserProfileInfoResponseDto getUserInfo(User user) {
+        return new UserProfileInfoResponseDto(
+                user.getNickname(),
+                user.getGender(),
+                user.getAge(),
+                user.getPhone(),
+                user.getEmail()
+        );
     }
 }
