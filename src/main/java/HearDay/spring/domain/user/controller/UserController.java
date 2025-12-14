@@ -1,7 +1,6 @@
 package HearDay.spring.domain.user.controller;
 
 import HearDay.spring.common.dto.response.CommonApiResponse;
-import HearDay.spring.common.enums.CategoryEnum;
 import HearDay.spring.domain.user.dto.request.*;
 import HearDay.spring.domain.user.dto.response.*;
 import HearDay.spring.domain.user.entity.User;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -82,7 +80,7 @@ public class UserController {
                 .body(CommonApiResponse.success("로그인에 성공했습니다.", result));
     }
 
-    @Value("${backend.url")
+    @Value("${backend.url}")
     private String backendUrl;
 
     @GetMapping("/login/kakao")
