@@ -19,7 +19,8 @@ dictionary:
   api:
     key: key-for-test
 
-
+backend:
+  url: http://localhost:8080
 
 jwt:
   secret:
